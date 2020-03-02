@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'customer_iface',
-    'manager_iface',
-    'users',
+    'customer_iface.apps.CustomerIfaceConfig',
+    'manager_iface.apps.ManagerIfaceConfig',
+    'admin_iface.apps.AdminIfaceConfig',
+    'users.apps.UsersConfig',                          #Automatically include the respective apps as well
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+LOGIN_REDIRECT_URL = "/users/customer-signup"
 
 
 # Static files (CSS, JavaScript, Images)

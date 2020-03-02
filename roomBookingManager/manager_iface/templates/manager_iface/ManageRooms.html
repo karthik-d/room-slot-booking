@@ -1,0 +1,84 @@
+{% extends "manager_iface/base.html" %}
+
+{% block content %} 
+
+<center><label class="descriptor">Your Rooms</label></center>
+{% if display.0 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Room Number</th>
+<th>Max. Advance Reservation</th>
+<th>Description</th>
+<th colspan="2">Actions</th>
+</tr>
+
+{% for row,t in ownRooms %}
+<tr>
+{% for cell in t %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id={{row.0}} method="POST" action="/manager/manage-slots">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{t.0}} readonly="readonly" hidden="True" />
+<input type="text" name="manager" value="own" readonly="readonly" hidden="True" />
+</form>
+
+<form id={{row.1}} method="POST">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{t.0}} readonly="readonly" hidden="True" />
+<input type="text" name="manager" value="own" readonly="readonly" hidden="True" />
+</form>
+
+<td><input type="submit" name="action" value="View Slots" class="innerSubmit" form={{row.0}} /></td>
+<td>
+<input type="submit" name="action" value="Delete" class="innerSubmit" form={{row.1}} onclick="return confirmAction('You are trying to Delete room.')"/>
+</td>
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Rooms to Display</b></label></center>
+<br /><br />
+{%endif%}
+
+<center><label class="descriptor">Other Rooms</label></center>
+{%if display.1%}
+<center><table border="2px" class="tasksDisp">
+<tr>
+<th>Room Number</th>
+<th>Max. Advance Reservation</th>
+<th>Manager</th>
+<th>Description</th>
+<th>Action</th>
+</tr>
+
+{% for row,t in otherRooms %}
+<tr>
+{% for cell in t %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id={{row}} method="POST" action="/manager/manage-slots">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{t.0}} readonly="readonly" hidden="True" />
+<input type="text" name="manager" value="other" readonly="readonly" hidden="True" />
+</form>
+
+<td><input type="submit" name="action" value="View Slots" class="innerSubmit" form={{row}} /></td>
+</tr>
+{% endfor %}
+
+</table></center>
+{%else%}		<!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Special Tasks to Display</b></label></center>
+<br /><br />
+{%endif%}
+
+{% endblock %}
+
+
+
+

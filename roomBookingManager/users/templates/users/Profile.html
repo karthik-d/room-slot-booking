@@ -1,0 +1,46 @@
+{% extends "users/base.html" %}
+
+{% block content %} 
+
+
+<!---
+
+<form method="GET" id="f1">
+{% csrf_token %}
+<input type="hidden" name="RegNum" value={{RNum}} />
+</form>
+
+
+
+<center><label class="descriptor">{{Type}} : {{Name}}</label></center> 
+<center><a href="/messenger/openConversation-{{RNum}}" class="sendMess" >Send a Message</a>
+<a href="mailto:{{Email}}?&body=Contacted through Volunteers-Webiste" class="sendMess depend">Send an Email</a></center>
+
+!--->
+
+<div> <center><label class="descriptor">{{Type}} : {{Name}}</label></center> </div>
+
+<center><table class="UserDisplay" border="0">
+<tr>
+<th>Email ID</th>
+<td>{{Email}}</td>
+</tr>
+<tr>
+<th>User<br />Type </th>
+<td>{{Type}}</td>
+</tr>
+<tr>
+<th>Gender </th>
+<td>{{Gender}}</td>
+</tr>
+<tr>
+<th>ID</th>
+<td>{{ID}}</td>
+</tr>
+</table></center>
+
+{% endblock %}
+
+
+
+

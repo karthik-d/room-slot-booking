@@ -1,7 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 from django.contrib.auth import get_user_model
-
 		
 class UserManager(BaseUserManager):    
 	"""Manager class for the User model, overriding the deault manager class\
@@ -10,11 +9,8 @@ class UserManager(BaseUserManager):
 	use_in_migrations = True
 	
 	def create_user(self, email, password=None, **extra_fields):
-		username = None
 		if not email:
 			raise ValueError("Email is required")
-		if not password:
-			raise ValueError("Password is required")
 		email = self.normalize_email(email)
 		
 		extra_fields.setdefault("is_staff",False)
@@ -28,11 +24,8 @@ class UserManager(BaseUserManager):
 	def create_superuser(self, email, password=None, **extra_fields): 
 		#Supply True for is_staff and is_superuser for successful creation. Acts as a potential process breaker
 		
-		username = None
 		if not email:
 			raise ValueError("Email is required")
-		if not password:
-			raise ValueError("Password is required")
 		email = self.normalize_email(email)
 		
 		extra_fields.setdefault("is_staff",True)
@@ -43,9 +36,19 @@ class UserManager(BaseUserManager):
 		if(extra_fields.get("is_superuser") is not True):  # Provision to abort creation, if False explicitly specified
 			raise ValueError("Error in SuperUser creation")		
 		
-		user = self.model(email=email,**extra_fields)     # An attribute referring back to User model
+		user = self.model(email=email,**extra_fields)      # An attribute referring back to User model
 		user.set_password(password)
 		user.save()	
+		
+		serial = Admin.objects.all().count() + 1		
+		new_admin = Admin()                                # Update the Admin database
+		new_admin.instance = user
+		new_admin.admin_id = "ADM"+(str(serial).rjust(3,'0'))
+		new_admin.save()
+		
+		admin_group = Group.objects.get(name="CustomerPrivilege")
+		admin_group.user_set.add(user)
+		
 		return user	
 		
 
@@ -61,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):  # PermissionsMixin to include t
 	
 	USERNAME_FIELD = "email"   # Email is used as the username
 	EMAIL_FIELD = "email"
-	REQUIRED_FIELDS = []       # Username and password are automatically required fields
+	REQUIRED_FIELDS = ["name"]       # Username and password are automatically required fields
 		
 	class Meta:
 		ordering = ["email"]
@@ -74,23 +77,71 @@ class User(AbstractBaseUser, PermissionsMixin):  # PermissionsMixin to include t
 						
 
 class Customer(models.Model):
-    instance = models.OneToOneField(get_user_model(),primary_key=True,on_delete=models.CASCADE,default=None)  
+	instance = models.OneToOneField(get_user_model(),primary_key=True,on_delete=models.CASCADE,default=None)  
     # Stores the User object
     # default=None is a syntactic placeholder. Handled using forms
-    phone = models.CharField(max_length=10,null=True)
-    gender = models.CharField(max_length=1,choices=(("M","Male"),("F","Female")),default="M")
+	phone = models.CharField(max_length=10,null=True)
+	gender = models.CharField(max_length=1,choices=(("M","Male"),("F","Female")),default="M")
+    
+	class Meta:
+		ordering = ["instance"]
+		verbose_name = "customer"
 
-    def __str__(self):
-        return self.instance.name
+	def __str__(self):
+		return self.instance.name
+		
+class Admin(models.Model):
+	""" Model to store details of "superuser" privileged user, who can generate employee ids and delete
+	employees. Only a superuser can create another superuser. One superuser is created explicitly, initially
+	with admin ID - "ADM001". Admins need not be Employees
+	"""
+
+	instance = models.OneToOneField(get_user_model(), primary_key=True, on_delete=models.CASCADE, default=None)  
+    # Stores the User object
+    # default=None is a syntactic placeholder. Handled using forms
+	admin_id = models.CharField(max_length=10, default="")   # A unique ID sequentially auto-generated
+
+	class Meta:
+		ordering = ["instance"]
+		verbose_name = "admin"
+
+	def __str__(self):
+		return self.instance.name  		
+		
+class EmployeeID(models.Model):
+	""" Model to store employee IDs generated so far and the admin who generated it as well as who has 
+	been assigned to it. Currently Managers are the only type of employees. Scenario can be extended to 
+	other types in future by creating a parent model to all possible designations, called "Employee"
+	"""
+	
+	emp_id = models.CharField(max_length=10, primary_key=True, default=None)  
+	emp_type = models.CharField(max_length=10, null=False, default=None)
+	creator = models.ForeignKey(Admin, on_delete=models.CASCADE, default=None, null=False)  
+	assignee = models.ForeignKey(User, on_delete=models.SET_NULL, default=None, null=True) 
+	# If a the employee User is deleted, the ID remains unassigned, to be reused for a new employee  
+	# default=None is a syntactic placeholder. Handled using forms 
+	
+	class Meta:
+		ordering = ["emp_id"]
+		verbose_name = "employee id"	
+
+	def __str__(self):
+		return self.emp_id		
 
 
 class Manager(models.Model):
-    instance = models.OneToOneField(get_user_model(),primary_key=True,on_delete=models.CASCADE,default=None)  
+	instance = models.OneToOneField(get_user_model(),primary_key=True,on_delete=models.CASCADE,default=None)  
     # Stores the User object
     # default=None is a syntactic placeholder. Handled using forms
-    phone = models.CharField(max_length=10,null=True)
-    gender = models.CharField(max_length=1,choices=(("M","Male"),("F","Female")),default="M")
+	emp_id = models.OneToOneField(EmployeeID,default=None,on_delete=models.CASCADE)   # A unique key generated by admin
+	phone = models.CharField(max_length=10,null=True)
+	gender = models.CharField(max_length=1,choices=(("M","Male"),("F","Female")),default="M")
 
-    def __str__(self):
-        return self.instance.name
+	class Meta:
+		ordering = ["instance"]
+		verbose_name = "manager"
 
+	def __str__(self):
+		return self.instance.name
+        
+       

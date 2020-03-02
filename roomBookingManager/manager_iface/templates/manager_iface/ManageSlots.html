@@ -1,0 +1,57 @@
+{% extends "manager_iface/base.html" %}
+
+{% block content %} 
+
+<center><label class="descriptor"><b>Room Number {{roomNo}}</b></label></center>
+{% if display %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Sl. No.</th>
+<th>Start Time</th>
+<th>End Time</th>
+{%if ownRoom%}<th colspan="2">Actions</th>{%endif%}    <!--Modifications allowed only for own rooms!-->
+</tr>
+
+{% for row,t in slots %}
+<tr>
+{% for cell in t %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id={{row.0}} method="POST" >  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{roomNo}} readonly="readonly" hidden="True" />
+<input type="text" name="start" value={{t.1}} readonly="readonly" hidden="True" />
+</form>
+
+<form id={{row.1}} method="POST" >  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{roomNo}} readonly="readonly" hidden="True" />
+<input type="text" name="start" value={{t.1}} readonly="readonly" hidden="True" />
+</form>
+
+{%if ownRoom%}      <!--Actions permitted only for own rooms!-->
+<td><input type="submit" name="action" value="Modify" class="innerSubmit" form={{row.0}} onclick="return confirmAction('You are trying to Modify slot.')"/></td>
+<td>
+<input type="submit" name="action" value="Delete" class="innerSubmit" form={{row.1}} onclick="return confirmAction('You are trying to Delete slot.')"/>
+</td>
+{%endif%}
+
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Slots to Display</b></label></center>
+<br /><br />
+{%endif%}
+
+
+<center><a href="/manager/manage-rooms"><input type="button" name="back" value="View Another Room" class="innerSubmit" /></a></center>
+
+{% endblock %}
+
+
+
+

@@ -7,33 +7,34 @@ class Room(models.Model):
 
 	room_no = models.CharField(max_length=10,primary_key=True,default="")   
 	# Defined as CharField for ease of operations
-	# All default values will be overriden during object creation
+	# All default values will be overriden during object creation	
+	manager = models.ForeignKey("users.Manager", on_delete=models.CASCADE, null=False, default=None)
 	advance_period = models.IntegerField(default=10)
-	description = models.CharField(max_length=100,null=True)     # Details about a particular room
+	description = models.TextField(max_length=200,null=True)     # Details about a particular room
+	# Manager deleted --> His rooms are deleted
 	
 	class Meta:
 		ordering = ["room_no"]
-		verbose_name = "rooms"
+		verbose_name = "room"
 	
 	def __str__(self):
 		return self.room_no
 	
-class AvailableSlot(models.Model):
-	""" Model to store details of available slots 
+class Slot(models.Model):
+	""" Model to store details of possible slots 
 	mapped to their corresponding Room instances
 	"""
 
-	room = models.ForeignKey("manager_iface.Room", on_delete=models.CASCADE, null=True)
+	room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
 	# null values will be handled using the form. Used here as a syntactical placeholder
-	start_date = models.DateField(default=datetime.date.today)
 	start_time = models.TimeField(default="00:00")
-	end_date = models.DateField(default=datetime.date.today)
-	end_time = models.TimeField(default="00:00")      
+	end_time = models.TimeField(default="00:00")     
+	# If the customer is deleted, the room becomes available 
 	# All default values will be overriden during object creation
 	
 	class Meta:
-		ordering = ["room"]     # The instance in turen returns te room number
-		verbose_name = "availbale slots"
+		ordering = ["start_time"]     # The instance in turen returns te room number
+		verbose_name = "slot"
 	
 	def __str__(self):
-		return self.start_date       
+		return self.room.room_no       

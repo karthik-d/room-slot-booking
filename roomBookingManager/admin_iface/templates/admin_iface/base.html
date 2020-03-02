@@ -1,0 +1,95 @@
+<html>
+<head>
+<title>Task Assigner</title>
+{% load static %}
+{% load extra_tags %}
+<link rel="stylesheet" type="text/css" href="{% static 'mainPage/style.css' %}">
+{%block head%}
+{%endblock%}
+
+<script>
+var ret;
+function confirmAction(details){
+	ret = confirm(details+" Do you want to continue?");
+	return ret;
+}
+</script>		
+</head>
+
+<body>
+<div class="topbar">
+<a class="left" href="/" style="margin-left:20px;">Home</a>
+
+{% if user.is_authenticated %}
+{% if request.user|has_group:"CustomerPrivilege" %} 
+<div class="dropdown left">
+<a class="dropbtn">View</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/mainPage/viewTask">Tasks</a>
+<a href="/mainPage/viewTimetable">TimeTable</a>
+</div>
+</div>
+<div class="dropdown left">
+<a class="dropbtn">Add/Modify</a>
+<div class="dropdown-content"><a href=""></a>
+<a href=""></a>
+<a href=""></a>
+<a href="/mainPage/addTimeTable">TimeTable</a>
+</div>
+</div>
+<a class="left" href="/messenger/viewMessages">Messages</a>
+
+{%else%}   
+<div class="dropdown left">
+<a class="dropbtn">View/Modify</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href=""></a>
+<a href="/mainPage/controlTask">All Tasks</a>
+</div>
+</div>
+<div class="dropdown left">
+<a class="dropbtn">Add</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/mainPage/addRegTask">Weekly Task</a>
+<a href="/mainPage/addIrregTask">Special Task</a>
+</div>
+</div>
+<a class="left" href="/messenger/viewMessages">Messages</a>
+{%endif%}
+
+<a href="/users/logout" class="right rounded" >Logout</a>
+<label class="right welcome">Welcome, {{request.user.p_name}}</label>
+{%else%}
+<a href="/users/login" class="right rounded" >Login</a>
+<div class="dropdown right">
+<a class="dropbtn rounded">SignUp</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/users/signup-student">As Student</a>
+<a href="/users/signup-incharge">As Incharge</a>
+</div>
+</div>
+{%endif%}
+</div>
+
+{% block topbar %}
+{% endblock %}
+
+{% if messages %}
+    {% for message in messages %}
+    <script type="text/javascript">
+		window.alert("{{message}}");
+	</script>
+    {% endfor %}
+{% endif %}
+
+{% block content %}
+
+{% endblock %}
+</body>
+
+</html>
+
