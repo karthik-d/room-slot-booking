@@ -33,7 +33,7 @@ class Slot(models.Model):
 	# All default values will be overriden during object creation
 	
 	class Meta:
-		ordering = ["start_time"]     # The instance in turen returns te room number
+		ordering = ["room__room_no"]     
 		verbose_name = "slot"
 	
 	def __str__(self):

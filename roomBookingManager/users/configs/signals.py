@@ -21,6 +21,8 @@ def create_groups(**kwargs):
     												content_type=targetModel)
 	if(created):
 		adminGroup.permissions.add(view_employee_perm)
+		customerGroup.permissions.add(view_employee_perm)
+		managerGroup.permissions.add(view_employee_perm)
     													
 	view_customer_perm, created = Permission.objects.get_or_create(codename='can_view_customer', 
     												name='Can View Customer',
@@ -31,5 +33,4 @@ def create_groups(**kwargs):
 	
 	# Admins are allowed to view the public profile information of other admins, customers and employees		
 	# Managers are allowed to view the public profile information of customers only
-	# Customers cannot view any profile except their own
-
+	# Customers can view their own and manager(i.e.employee) profiles

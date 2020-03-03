@@ -1,4 +1,5 @@
 from django import forms
+from django.utils import timezone
 from django.shortcuts import render
 from django.views import View
 from django.contrib import messages
@@ -7,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate
 from datetime import datetime
 from users.models import Manager
-from customer_iface.models import Reservation
+from customer_iface.models import Reservation, IsolatedResData
 from .forms import RoomCreationForm, SlotCreationForm
 from .models import Room, Slot
 
@@ -22,7 +23,7 @@ class CreateRoom(View):
 		else:
 			return False
 	
-	def post(self,request):
+	def post(self,request,*args,**kwargs):
 		self.form = RoomCreationForm(request.POST)
 		try:
 			if(self.form.is_valid()):	
@@ -47,7 +48,7 @@ class CreateRoom(View):
 			return HttpResponseRedirect(reverse('RoomCreation'))
 						
 	
-	def get(self,request):
+	def get(self,request,*args,**kwargs):
 		cont = dict()
 		cont['form'] = self.form
 		cont['prompt'] = "Create New Room"
@@ -85,7 +86,7 @@ class CreateSlot(View):
 				return True
 		return False						
 	
-	def post(self,request):
+	def post(self,request,*args,**kwargs):
 		self.form = SlotCreationForm(request.POST)
 		rooms_to_disp = self.own_rooms(request)
 		self.form.fields["room"].choices = tuple(zip(rooms_to_disp,map(str,rooms_to_disp))) 
@@ -117,7 +118,7 @@ class CreateSlot(View):
 			return HttpResponseRedirect(reverse('SlotCreation'))
 						
 	
-	def get(self,request):
+	def get(self,request,*args,**kwargs):
 		rooms_to_disp = self.own_rooms(request)
 		if(rooms_to_disp):
 			cont = dict()
@@ -135,7 +136,7 @@ class ManageRooms(View):
 	get_template = 'manager_iface/ManageRooms.html'
 	post_template = 'manager_iface/ConfirmDeletion.html'
 	
-	def post(self,request):
+	def post(self,request,*args,**kwargs):
 		if(request.POST['action']=="Delete"):
 			this_room = Room.objects.filter(room_no=request.POST['roomNo'])[0]
 			time_now = datetime.time(datetime.now())
@@ -174,7 +175,7 @@ class ManageRooms(View):
 		else:
 			return HttpResponseRedirect(reverse('ManageRooms'))								
 	
-	def get(self,request):	
+	def get(self,request,*args,**kwargs):	
 		this_manager = Manager.objects.filter(instance=request.user)[0]
 		own_rooms = Room.objects.filter(manager=this_manager)
 		form_row = [('a'+str(x+1),'b'+str(x+1)) for x in range(len(own_rooms))]
@@ -201,8 +202,25 @@ class ManageRooms(View):
 		
 class DeleteRoom(View):
 	
-	def post(self,request):
+	def post(self,request,*args,**kwargs):
 		target_roomno = list(request.POST.keys())[1]
+		# Affected reservations
+		# Getting and Modifying the IsolatedDatabase Accordingly
+		time_now = datetime.time(datetime.now())
+		date_now = datetime.date(datetime.now())
+		affect_reserves = list(IsolatedResData.objects.filter(
+										room_no = target_roomno,
+										date__gt=date_now,
+										status="Active"
+									  )|IsolatedResData.objects.filter(
+									  	room_no = target_roomno,
+										date=date_now,
+										start_time__gte=time_now,
+										status="Active"
+									  ))									  						  	
+		for iso_res in affect_reserves:
+			iso_res.status = "Cancelled"     # Setting reservation status as cancelled
+			iso_res.save()		
 		deleted = Room.objects.filter(room_no=target_roomno).delete()
 		messages.add_message(request, messages.SUCCESS, "Deleted Successfully")
 		return HttpResponseRedirect(reverse('ManageRooms'))			
@@ -212,7 +230,7 @@ class ManageSlots(View):
 	template = 'manager_iface/ManageSlots.html'
 	res_template = 'manager_iface/ConfirmDeletion.html'
 	
-	def post(self,request):	
+	def post(self,request,*args,**kwargs):	
 		if(request.POST['action']=="View Slots"):	
 			this_manager = Manager.objects.filter(instance=request.user)[0]
 			this_room = Room.objects.filter(room_no=request.POST['roomNo'])[0]
@@ -248,7 +266,7 @@ class ManageSlots(View):
 										 	slot=this_slot, 
 											date=date_now,
 											slot__start_time__gte=time_now
-										  )
+										  )							  
 			# To provide hyperlinks to customer profile
 			cust_links = [(i.customer.instance.name,                 
 						i.customer.instance.email) for i in reserves]
@@ -274,7 +292,7 @@ class ManageSlots(View):
 			
 			return render(request,self.res_template,context=cont)
 			
-	def get(self,request):
+	def get(self,request,*args,**kwargs):
 		messages.add_message(request, messages.ERROR, "Select a room first")
 		return HttpResponseRedirect(reverse('ManageRooms'))
 
@@ -310,7 +328,7 @@ class ModifySlot(View):
 				return True
 		return False							
 	
-	def post(self,request):
+	def post(self,request,*args,**kwargs):
 		if('roomNo' in request.POST.keys()):
 			this_roomno = request.POST['roomNo']
 			this_start = request.POST['start']
@@ -334,9 +352,10 @@ class ModifySlot(View):
 		else:
 			self.form = SlotCreationForm(request.POST)
 			this_roomno = request.POST['room']
-			this_start = request.POST['start']
+			this_start = request.POST['start']    #OLD DATA - BEFORE MODIFICATION
 			this_slot = Slot.objects.filter(room__room_no=this_roomno, 
-											start_time=this_start)[0]   
+											start_time=this_start)[0]  
+													  						 
 			self.form.fields['room'].choices = [(self.get_room(this_roomno), this_roomno)]
 			# Exploiting the deep-copied field attribute of Form Class, that was created using its MetaClass
 			# Necessary to refill choices since the form is Re-Instantiated here
@@ -349,9 +368,31 @@ class ModifySlot(View):
 					if(self.slot_intrudes(self.form.cleaned_data['room'],slot_start,slot_end)):
 						raise ValueError("Slot timings clash with another!")
 						
+					# Affected reservations
+					# Getting and Modifying the IsolatedDatabase Accordingly
+					time_now = datetime.time(datetime.now())
+					date_now = datetime.date(datetime.now())
+					affect_reserves = list(IsolatedResData.objects.filter(
+													room_no = this_roomno,
+													start_time=this_slot.start_time, 
+													date__gt=date_now,
+													status="Active"
+												  )|IsolatedResData.objects.filter(
+												  	room_no = this_roomno,
+												 	start_time=this_slot.start_time, 
+													date=date_now,
+													start_time__gte=time_now,
+													status="Active"
+												  ))
+					#raise ValueError							  	
+					for iso_res in affect_reserves:
+						iso_res.start_time = slot_start
+						iso_res.end_time = slot_end
+						iso_res.save()	
+					# Modifying slots	
 					this_slot.start_time = slot_start
 					this_slot.end_time = slot_end
-					this_slot.save()			
+					this_slot.save()									  	
 					
 					messages.add_message(request, messages.SUCCESS, "Slot Updated Successfully!")	
 					return HttpResponseRedirect(reverse('ManageRooms'))
@@ -367,11 +408,112 @@ class ModifySlot(View):
 class DeleteSlot(View):
 	
 	def post(self,request):
-		target_roomno = request.POST['roomNo']
+		target_roomno = request.POST['roomNo']		
 		start_time = datetime.time(datetime.strptime(request.POST['start'],"%H:%M"))
-		deleted = Slot.objects.filter(room__room_no=target_roomno, start_time=start_time).delete()
+		target_slot = Slot.objects.filter(room__room_no=target_roomno, start_time=start_time)[0]
+		# Affected reservations
+		# Getting and Modifying the IsolatedDatabase Accordingly
+		time_now = datetime.time(datetime.now())
+		date_now = datetime.date(datetime.now())
+		affect_reserves = list(IsolatedResData.objects.filter(
+										room_no = target_roomno,
+										start_time=target_slot.start_time, 
+										date__gt=date_now,
+										status="Active"
+									  )|IsolatedResData.objects.filter(
+									  	room_no = target_roomno,
+									 	start_time=target_slot.start_time, 
+										date=date_now,
+										start_time__gte=time_now,
+										status="Active"
+									  ))							  	
+		for iso_res in affect_reserves:
+			iso_res.status = "Cancelled"     # Setting reservation status as cancelled
+			iso_res.save()		
+		# No two slots will have the same start time
+		deleted = target_slot.delete()
 		messages.add_message(request, messages.SUCCESS, "Deleted Successfully")
-		return HttpResponseRedirect(reverse('ManageRooms'))				
+		return HttpResponseRedirect(reverse('ManageRooms'))	
+		
+
+class ViewReservations(View):
+	template = "manager_iface/ViewBookings.html"
+
+	def get(self,request,*args,**kwargs):
+                         
+		today = datetime.date(datetime.now())
+		now = datetime.time(datetime.now())                         
+		future_res = list(IsolatedResData.objects.filter(date__gt=today,
+        												status="Active") |	                                                 			                IsolatedResData.objects.filter(date=today,
+        												start_time__gt=now,
+        												status="Active"))                
+        # Past Bookings                  
+		past_res = list(IsolatedResData.objects.filter(date__lt=today,
+														status="Active") |	                                                 			                IsolatedResData.objects.filter(date=today,
+														end_time__lte=now,
+														status="Active"))
+		present_res = list(IsolatedResData.objects.filter(date=today,
+														start_time__lt=now,
+														end_time__gte=now,
+														status="Active"))	
+		can_res = list(IsolatedResData.objects.filter(status="Cancelled"))
+		
+		manager_links = [(i.manager_name,                 
+						i.manager_email) for i in future_res]
+		cust_links = [(i.cust_name,                 
+						i.cust_email) for i in future_res]				
+		future_data = [(i.room_no,
+						i.date.strftime("%Y-%m-%d"),
+						i.start_time.strftime("%H:%M"),
+						i.end_time.strftime("%H:%M"),
+						i.status) for i in future_res]
+		future_res = list(zip(manager_links,cust_links,future_data))	
+				
+		manager_links = [(i.manager_name,                 
+						i.manager_email) for i in past_res]
+		cust_links = [(i.cust_name,                 
+						i.cust_email) for i in past_res]	
+		past_data = [[i.room_no,
+						i.date.strftime("%Y-%m-%d"),
+						i.start_time.strftime("%H:%M"),
+						i.end_time.strftime("%H:%M"),
+						i.status] for i in past_res]
+		past_res = list(zip(manager_links,cust_links,past_data))					
+						
+		manager_links = [(i.manager_name,                 
+						i.manager_email) for i in can_res]
+		cust_links = [(i.cust_name,                 
+						i.cust_email) for i in can_res]				
+		can_data = [(i.room_no,
+						i.date.strftime("%Y-%m-%d"),
+						i.start_time.strftime("%H:%M"),
+						i.end_time.strftime("%H:%M"),
+						i.status) for i in can_res]
+		can_res = list(zip(manager_links,cust_links,can_data))	
+				
+		manager_links = [(i.manager_name,                 
+						i.manager_email) for i in present_res]
+		cust_links = [(i.cust_name,                 
+						i.cust_email) for i in present_res]	
+		present_data = [[i.room_no,
+						i.date.strftime("%Y-%m-%d"),
+						i.start_time.strftime("%H:%M"),
+						i.end_time.strftime("%H:%M"),
+						i.status] for i in present_res]
+		present_res = list(zip(manager_links,cust_links,present_data))									
+						
+		for data in past_data:
+			if(data[4]=="Active"):
+				data[4]="Used"     # Active rooms of the past, were occupied already				
+		past_res = list(zip(manager_links,past_data))			
+		cont = dict()			
+		cont['past'] = past_res
+		cont['future'] = future_res
+		cont['present'] = present_res
+		cont['cancel'] = can_res
+		cont['display'] = (bool(len(present_res)),bool(len(future_res)),bool(len(past_res)),bool(len(can_res)))
+		return render(request,self.template,context=cont)
+		                  		
 		
 		
 

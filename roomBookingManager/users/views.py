@@ -151,7 +151,7 @@ class ViewUserProfile(View):
 	template = "users/Profile.html"
 	resolve_gender = {"M":"Male","F":"Female"}
 	
-	def post(self,request):
+	def post(self,request,*args,**kwargs):
 		email = list(request.POST.keys())[1]
 		try:
 		    targetUser = list(User.objects.filter(email=email))[0]        # User to be displayed
@@ -172,8 +172,8 @@ class ViewUserProfile(View):
 					raise ValueError('Permission Denied')
 					
 			elif(targetGroup=="ManagerPrivilege"):
-				if(request.user.has_perm('can_view_manager')):	
-					targetSpecific = list(Incharge.objects.filter(instance=targetUser))[0]  # Manager Instance
+				if(request.user.has_perm('users.can_view_employee')):	
+					targetSpecific = list(Manager.objects.filter(instance=targetUser))[0]  # Manager Instance
 					typ = "Manager"
 					gender = targetSpecific.gender
 					person_id = targetSpecific.emp_id
@@ -181,8 +181,8 @@ class ViewUserProfile(View):
 					raise ValueError('Permission Denied')
 				
 			elif(targetGroup=="AdminPrivilege"):
-				if(request.user.has_perm('can_view_admin')):			
-					targetSpecific = list(Incharge.objects.filter(instance=targetUser))[0]  # Admin Instance
+				if(request.user.has_perm('users.can_view_admin')):			
+					targetSpecific = list(Admin.objects.filter(instance=targetUser))[0]  # Admin Instance
 					typ = "Admin"    
 					gender = "Not Specified"
 					person_id = targetSpecific.admin_id
@@ -208,7 +208,7 @@ class Logout(View):
 	"""Class based View for performing logout operation for a user, redirecting to main page
 	"""
 
-	def get(self,request):
+	def get(self,request,*args,**kwargs):
 		logout(request)
 		messages.add_message(request, messages.SUCCESS, 'Logged Out!')
 		return HttpResponseRedirect(reverse('MainPage') )	

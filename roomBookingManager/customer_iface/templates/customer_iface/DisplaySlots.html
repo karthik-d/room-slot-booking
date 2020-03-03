@@ -1,0 +1,60 @@
+{% extends "customer_iface/base.html" %}
+
+{% block content %} 
+
+
+<form method="POST" id="form1" action="" >
+{% csrf_token %}
+<center><label class="descriptor">{{prompt}}</label></center>
+<center>
+<table padding="5px" class="generalForm">
+{{form.as_table}}
+</table>
+<input type='submit' form="form1" value="Search" class="generalForm">
+</center>
+</form>
+
+<br /><br />
+<center><label class="descriptor"><b>Available Rooms (Within Advance Reservation Period)</b></label></center>
+<br />
+{% if display %}
+<center><table border="2px" class="tasksDisp">
+<tr>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Actions</th>  
+</tr>
+
+{% for k,comb in slots.items %}
+<tr>
+<td colspan="3"><center>Room Number - {{k}}</center></td>
+</tr>
+{% for inner in comb %}
+<tr>
+{% for cell in inner.0%}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id={{inner.1}} method="POST" action="reserve-slot">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{k}} readonly="readonly" hidden="True" />
+<input type="text" name="start" value={{inner.0.0}} readonly="readonly" hidden="True" />
+<input type="text" name="date" value={{date}} readonly="readonly" hidden="True" />
+</form> 
+<td><input type="submit" name="action" value="Book" class="innerSubmit" form={{inner.1}} onclick="return confirmAction('You are attempting to book a room.')"/></td>
+</tr>
+{% endfor %}
+{% endfor %}
+</table></center>
+
+{%else%}		<!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Rooms to Display</b></label></center>
+<br /><br />
+{%endif%}
+
+{% endblock %}
+
+
+
+
+
