@@ -33,14 +33,17 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'customer_iface.apps.CustomerIfaceConfig',
     'manager_iface.apps.ManagerIfaceConfig',
     'admin_iface.apps.AdminIfaceConfig',
-    'users.apps.UsersConfig',                          #Automatically include the respective apps as well
+    'users.apps.UsersConfig',
+    'api.apps.ApiConfig',                          #Automatically include the respective apps as well
 ]
 
 MIDDLEWARE = [
@@ -118,6 +121,14 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+SITE_ID = 1    # To enable Site Model
+
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
 
 LOGIN_REDIRECT_URL = "/users/customer-signup"
 

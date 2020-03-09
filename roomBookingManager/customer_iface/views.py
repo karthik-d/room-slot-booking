@@ -84,22 +84,10 @@ class ReserveSlot(View):
         new_reserve.slot = this_slot
         new_reserve.customer = this_customer
         new_reserve.date = date
-        new_reserve.save()
-        
-        #Simoultaneously update the isolated reservation database
-        new_iso_res = IsolatedResData()
-        new_iso_res.room_no = this_room.room_no
-        new_iso_res.start_time = this_slot.start_time
-        new_iso_res.end_time = this_slot.end_time
-        new_iso_res.cust_email = this_customer.instance.email
-        new_iso_res.cust_name = this_customer.instance.name
-        new_iso_res.manager_email = this_room.manager.instance.email
-        new_iso_res.manager_name = this_room.manager.instance.name
-        new_iso_res.date = date
-        new_iso_res.status = "Active"
-        new_iso_res.save()       
-
-        messages.add_message(request,messages.SUCCESS,"Room Reserved")
+        val = new_reserve.save()        
+        # Simoultaneously update the isolated reservation database
+        # This is done using a pre_save signal attached to Reservation class
+        messages.add_message(request,messages.SUCCESS,"Room Reserved. Email notification to Customer was attempted")
         return HttpResponseRedirect(reverse('FindSlot'))
 
     def get(self,request,*args,**kwargs):
@@ -178,15 +166,9 @@ class DeleteReservation(View):
 													slot=this_slot,
 													date=date)[0]	
 		# NO TWO SLOTS CAN START AT THE SAME TIME
-		# Simoultaneously setting status as Cancelled in Isolated Reservation Data 											
-		this_iso_res = IsolatedResData.objects.filter(room_no=this_room.room_no,
-													start_time=this_slot.start_time,
-													date=date)[0]  
-		
-		this_iso_res.status = "Cancelled"
-		this_iso_res.save()
+		# pre-delete signal is configured to modify the IsolatedResData model		
 		this_reserve.delete()
-		messages.add_message(request,messages.SUCCESS,"Reservation Deleted")
+		messages.add_message(request,messages.SUCCESS,"Reservation Deleted. Email notification to Customer was attempted")
 		return HttpResponseRedirect(reverse('ManageReserve'))
 	
 	def get(self,request,*args,**kwargs):

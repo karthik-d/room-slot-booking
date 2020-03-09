@@ -24,4 +24,5 @@ urlpatterns = [
     path('manager/', include('manager_iface.urls')),
     path('users/', include('users.urls')),
     path('custom-admin/', include('admin_iface.urls')),
+    path('api/', include('api.urls')),
 ]

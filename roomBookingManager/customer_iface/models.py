@@ -19,6 +19,7 @@ class Reservation(models.Model):
 	def __str__(self):
 		return self.customer.instance.name
 		
+			
 class IsolatedResData(models.Model):
 	""" A model that is in now manner linked to any other databases.
 	TO PRESERVE LIMITED AMOUNT OF PAST DATA, EVEN IF SLOTS GET MODIFED OVER TIME, MANAGERS or CUSTOMERS GO AWAY, etc.

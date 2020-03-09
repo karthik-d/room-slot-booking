@@ -205,24 +205,9 @@ class DeleteRoom(View):
 	def post(self,request,*args,**kwargs):
 		target_roomno = list(request.POST.keys())[1]
 		# Affected reservations
-		# Getting and Modifying the IsolatedDatabase Accordingly
-		time_now = datetime.time(datetime.now())
-		date_now = datetime.date(datetime.now())
-		affect_reserves = list(IsolatedResData.objects.filter(
-										room_no = target_roomno,
-										date__gt=date_now,
-										status="Active"
-									  )|IsolatedResData.objects.filter(
-									  	room_no = target_roomno,
-										date=date_now,
-										start_time__gte=time_now,
-										status="Active"
-									  ))									  						  	
-		for iso_res in affect_reserves:
-			iso_res.status = "Cancelled"     # Setting reservation status as cancelled
-			iso_res.save()		
+		# Getting and Modifying the IsolatedDatabase Accordingly through a pre_delete signal
 		deleted = Room.objects.filter(room_no=target_roomno).delete()
-		messages.add_message(request, messages.SUCCESS, "Deleted Successfully")
+		messages.add_message(request, messages.SUCCESS, "Deleted Successfully.Email notification to Customers was attempted")
 		return HttpResponseRedirect(reverse('ManageRooms'))			
 		
 		
@@ -367,34 +352,14 @@ class ModifySlot(View):
 						raise ValueError("Start Time should be before End Time")
 					if(self.slot_intrudes(self.form.cleaned_data['room'],slot_start,slot_end)):
 						raise ValueError("Slot timings clash with another!")
-						
-					# Affected reservations
-					# Getting and Modifying the IsolatedDatabase Accordingly
-					time_now = datetime.time(datetime.now())
-					date_now = datetime.date(datetime.now())
-					affect_reserves = list(IsolatedResData.objects.filter(
-													room_no = this_roomno,
-													start_time=this_slot.start_time, 
-													date__gt=date_now,
-													status="Active"
-												  )|IsolatedResData.objects.filter(
-												  	room_no = this_roomno,
-												 	start_time=this_slot.start_time, 
-													date=date_now,
-													start_time__gte=time_now,
-													status="Active"
-												  ))
-					#raise ValueError							  	
-					for iso_res in affect_reserves:
-						iso_res.start_time = slot_start
-						iso_res.end_time = slot_end
-						iso_res.save()	
+					# Modify the IsolatedDatabase Accordingly
 					# Modifying slots	
+					old_start = this_slot.start_time
 					this_slot.start_time = slot_start
 					this_slot.end_time = slot_end
-					this_slot.save()									  	
-					
-					messages.add_message(request, messages.SUCCESS, "Slot Updated Successfully!")	
+					this_slot.save(old_start_time=old_start, room_no=this_roomno)									  	
+					# Additional keyword arguments are sent to the post_save signals to modify IsoResData
+					messages.add_message(request, messages.SUCCESS, "Slot Updated Successfully! Email notification to Customer was attempted")	
 					return HttpResponseRedirect(reverse('ManageRooms'))
 					
 				else:
@@ -413,26 +378,9 @@ class DeleteSlot(View):
 		target_slot = Slot.objects.filter(room__room_no=target_roomno, start_time=start_time)[0]
 		# Affected reservations
 		# Getting and Modifying the IsolatedDatabase Accordingly
-		time_now = datetime.time(datetime.now())
-		date_now = datetime.date(datetime.now())
-		affect_reserves = list(IsolatedResData.objects.filter(
-										room_no = target_roomno,
-										start_time=target_slot.start_time, 
-										date__gt=date_now,
-										status="Active"
-									  )|IsolatedResData.objects.filter(
-									  	room_no = target_roomno,
-									 	start_time=target_slot.start_time, 
-										date=date_now,
-										start_time__gte=time_now,
-										status="Active"
-									  ))							  	
-		for iso_res in affect_reserves:
-			iso_res.status = "Cancelled"     # Setting reservation status as cancelled
-			iso_res.save()		
 		# No two slots will have the same start time
 		deleted = target_slot.delete()
-		messages.add_message(request, messages.SUCCESS, "Deleted Successfully")
+		messages.add_message(request, messages.SUCCESS, "Deleted Successfully. Email notification to Customer was attempted")
 		return HttpResponseRedirect(reverse('ManageRooms'))	
 		
 

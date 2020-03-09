@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -211,7 +212,7 @@ class Logout(View):
 	def get(self,request,*args,**kwargs):
 		logout(request)
 		messages.add_message(request, messages.SUCCESS, 'Logged Out!')
-		return HttpResponseRedirect(reverse('MainPage') )	
+		return HttpResponseRedirect(reverse('Login') )	
 		
 		
 	

@@ -25,7 +25,7 @@ class Slot(models.Model):
 	mapped to their corresponding Room instances
 	"""
 
-	room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
+	room = models.ForeignKey(Room, related_name='slots', on_delete=models.CASCADE, null=True)
 	# null values will be handled using the form. Used here as a syntactical placeholder
 	start_time = models.TimeField(default="00:00")
 	end_time = models.TimeField(default="00:00")     
@@ -37,4 +37,13 @@ class Slot(models.Model):
 		verbose_name = "slot"
 	
 	def __str__(self):
-		return self.room.room_no       
+		return self.room.room_no   
+		
+	def save(self, *args, **kwargs):
+		try:
+			self.old_start_time = kwargs.pop('old_start_time',None)
+			self.room_no = kwargs.pop('room_no',None)
+		except KeyError:
+			pass	
+		super(Slot,self).save(*args,**kwargs)
+		
