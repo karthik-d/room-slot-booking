@@ -130,7 +130,9 @@ EMAIL_PORT = 587
 
 EMAIL_USE_TLS = True
 
-LOGIN_REDIRECT_URL = "/users/customer-signup"
+LOGIN_REDIRECT_URL = "/home"
+
+LOGIN_URL = "/users/login"
 
 
 # Static files (CSS, JavaScript, Images)

@@ -19,11 +19,11 @@
 <th>Manager</th>
 </tr>
 
-{% for man,cust,other in past %}
+{% for man,cust,other in present %}
 
 <tr>
 <td>
-<input type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
+<input class="contactLink" type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
 </td>
 
 {% for cell in other %}
@@ -34,13 +34,17 @@
     {% csrf_token %}
     <input type="text" hidden="True" />
 </form>
+    
+<td>
+<input class="contactLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td>
 
 </tr>
 {% endfor %}
 </table></center>
 
 {%else%}   <!--Nothing to display!-->
-<center><label class="descriptor"><b>No Reservations to display</b></label></center>
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
 <br /><br />
 {%endif%}
     
@@ -66,7 +70,7 @@
 
 <tr>
 <td>
-<input type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
+<input class="contactLink" type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
 </td>
 
 {% for cell in other %}
@@ -77,13 +81,17 @@
     {% csrf_token %}
     <input type="text" hidden="True" />
 </form>
+    
+<td>
+<input class="contactLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td>
 
 </tr>
 {% endfor %}
 </table></center>
 
 {%else%}   <!--Nothing to display!-->
-<center><label class="descriptor"><b>No Reservations to display</b></label></center>
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
 <br /><br />
 {%endif%}
     
@@ -109,7 +117,7 @@
 
 <tr>
 <td>
-<input type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
+<input class="contactLink" type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
 </td>
 
 {% for cell in other %}
@@ -122,7 +130,7 @@
 </form>
     
 <td>
-<input type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+<input class="contactLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
 </td>
 
 </tr>
@@ -130,7 +138,7 @@
 </table></center>
 
 {%else%}   <!--Nothing to display!-->
-<center><label class="descriptor"><b>No Reservations to display</b></label></center>
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
 <br /><br />
 {%endif%}
 
@@ -155,7 +163,7 @@
 
 <tr>
 <td>
-<input type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
+<input class="contactLink" type="submit" name={{cust.1}} value={{cust.0}} class="hyperlink" form="f0" />
 </td>
 
 {% for cell in other %}
@@ -168,7 +176,7 @@
 </form>
     
 <td>
-<input type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+<input class="contactLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
 </td>
 
 </tr>
@@ -176,7 +184,7 @@
 </table></center>
 
 {%else%}   <!--Nothing to display!-->
-<center><label class="descriptor"><b>No Reservations to display</b></label></center>
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
 <br /><br />
 {%endif%}
 

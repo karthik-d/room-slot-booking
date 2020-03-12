@@ -10,6 +10,30 @@ class RoomCreationForm(forms.Form):
 	description = forms.CharField(max_length=200,required=False)
 	
 class SlotCreationForm(forms.Form):
+
+	'''self.form = SlotCreationForm(for_modification=True,
+											room_inst=get_room(this_roomno),
+											slot_inst-this_slot)
+	
+	self.form.fields['room'].choices = [(self.get_room(this_roomno), this_roomno)]
+			self.form.fields['room'].initial = this_roomno
+			self.form.fields['room'].disabled = True
+			self.form.fields['start_time'].initial = this_slot.start_time.strftime("%H:%M")
+			self.form.fields['end_time'].initial = this_slot.end_time.strftime("%H:%M")	'''
+
+	def __init__(self, *args, **kwargs):
+		room_choices = kwargs.pop('choices')
+		if(kwargs.pop('for_modification',False)):   # Removing extra kwargs before calling base class ctor
+			room_inst = kwargs.pop('room_inst')
+			slot_inst = kwargs.pop('slot_inst')
+			super(SlotCreationForm, self).__init__(*args, **kwargs)    # Calling base ctor to use 'fields'
+			self.fields['room'].choices = [(room_inst, room_inst.room_no)]
+			self.fields['room'].disabled = True
+			self.fields['start_time'].initial = slot_inst.start_time.strftime("%H:%M")
+			self.fields['end_time'].initial = slot_inst.end_time.strftime("%H:%M")
+		else:
+			super(SlotCreationForm, self).__init__(*args, **kwargs)
+			self.fields['room'].choices = room_choices
 	
 	room = forms.ChoiceField(label="Room No.",
 							required=True,
@@ -25,7 +49,6 @@ class SlotCreationForm(forms.Form):
 								widget=forms.TextInput(attrs={'type':'time','min':'00:00','max':'23:59'})
 								)
 								
-								#tuple(zip(Room.objects.all(),map(str,Room.objects.all())))
 								
 							
 

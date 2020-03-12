@@ -1,0 +1,99 @@
+{% extends "customer_iface/base.html" %}
+
+{% block content %} 
+
+<!-- ------------------------------------------------------------------------------------------------------ !-->
+
+<center><label class="descriptor"><b>Unassigned Employee IDs</b></label><br /><br />
+<label class="dispAnamoly"><b>(Freed IDs also appear here)</b></label></center><br /><br/>
+
+{% if display.0 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Creator</th>
+<th>Employee ID</th>
+<th>Employee Type</th>
+</tr>
+
+{% for adm,other in usableIds  %}
+
+<tr>
+<td>
+<input class="contactLink" type="submit" name={{adm.1}} value={{adm.0}} form="f0" />
+</td>
+
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+</form>
+
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No IDs to display</b></label></center>
+<br /><br />
+{%endif%}
+    
+
+<!-- ------------------------------------------------------------------------------------------------------ !-->
+
+<center><label class="descriptor"><b>Assigned Employee IDs</b></label></center><br />
+
+{% if display.1 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Creator</th>
+<th>Employee ID</th>
+<th>Employee Type</th>
+<th>Assignee</th>
+<th>Action</th>
+</tr>
+
+{% for emp,adm,form,other in usedIds %}
+
+<tr>
+<td>
+<input class="contactLink" type="submit" name={{adm.1}} value={{adm.0}} class="hyperlink" form="f0" />
+</td>
+
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+</form>
+    
+<td>
+<input class="contactLink" type="submit" name={{emp.1}} value={{emp.0}} class="hyperlink" form="f0" />
+</td>
+
+<form id={{form}} method="POST" action="">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="empId" value={{other.0}} readonly="readonly" hidden="True" />
+</form> 
+<td><input type="submit" name="action" value="Delete" class="innerSubmit" form={{form}} onclick="return confirmAction('You are attempting to delete an employee.')"/></td>
+
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No IDs to display</b></label></center>
+<br /><br />
+{%endif%}
+    
+{% endblock %}
+
+
+
+

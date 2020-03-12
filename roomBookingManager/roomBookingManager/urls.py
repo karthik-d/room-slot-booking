@@ -16,13 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from .views import MainLanding
 
 urlpatterns = [
-	path('',RedirectView.as_view(url='cust/',permanent=True)),
+	path('',RedirectView.as_view(url='home',permanent=True)),
     path('admin/', admin.site.urls),
     path('cust/', include('customer_iface.urls')),
     path('manager/', include('manager_iface.urls')),
     path('users/', include('users.urls')),
     path('custom-admin/', include('admin_iface.urls')),
     path('api/', include('api.urls')),
+    path('home', MainLanding.as_view(), name='home'),
 ]

@@ -6,12 +6,17 @@ from django.contrib import messages
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.decorators import method_decorator
+from roomBookingManager.decorators import group_required, anonymous_required
 from datetime import datetime
 from users.models import Manager
 from customer_iface.models import Reservation, IsolatedResData
 from .forms import RoomCreationForm, SlotCreationForm
 from .models import Room, Slot
 
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')
 class CreateRoom(View):
 	form = RoomCreationForm()
 	template = 'manager_iface/DisplayForm.html'
@@ -54,9 +59,9 @@ class CreateRoom(View):
 		cont['prompt'] = "Create New Room"
 		return render(request, self.template, context=cont)
 
-		
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')	
 class CreateSlot(View):
-	form = SlotCreationForm()
 	template = 'manager_iface/DisplayForm.html'
 	
 	def own_rooms(self,request):
@@ -122,7 +127,8 @@ class CreateSlot(View):
 		rooms_to_disp = self.own_rooms(request)
 		if(rooms_to_disp):
 			cont = dict()
-			self.form.fields["room"].choices = tuple(zip(rooms_to_disp,map(str,rooms_to_disp)))
+			room_choices = tuple(zip(rooms_to_disp,map(str,rooms_to_disp)))
+			self.form = SlotCreationForm(choices=room_choices)
 			# Exploiting the deep-copied field attribute of Form Class, that was created using its MetaClass
 			cont['form'] = self.form
 			cont['prompt'] = "Create New Slot"
@@ -131,7 +137,8 @@ class CreateSlot(View):
 			messages.add_message(request, messages.ERROR, "No Rooms Under Your Control!")
 			return HttpResponseRedirect(reverse('RoomCreation'))
 	
-	
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')
 class ManageRooms(View):
 	get_template = 'manager_iface/ManageRooms.html'
 	post_template = 'manager_iface/ConfirmDeletion.html'
@@ -199,7 +206,8 @@ class ManageRooms(View):
         
 		return render(request,self.get_template,context=cont) 	
 		
-		
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')		
 class DeleteRoom(View):
 	
 	def post(self,request,*args,**kwargs):
@@ -207,10 +215,11 @@ class DeleteRoom(View):
 		# Affected reservations
 		# Getting and Modifying the IsolatedDatabase Accordingly through a pre_delete signal
 		deleted = Room.objects.filter(room_no=target_roomno).delete()
-		messages.add_message(request, messages.SUCCESS, "Deleted Successfully.Email notification to Customers was attempted")
+		messages.add_message(request, messages.SUCCESS, "Deleted Successfully.Email notification to customers(if any) was attempted")
 		return HttpResponseRedirect(reverse('ManageRooms'))			
 		
-		
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')		
 class ManageSlots(View):
 	template = 'manager_iface/ManageSlots.html'
 	res_template = 'manager_iface/ConfirmDeletion.html'
@@ -281,9 +290,9 @@ class ManageSlots(View):
 		messages.add_message(request, messages.ERROR, "Select a room first")
 		return HttpResponseRedirect(reverse('ManageRooms'))
 
-		
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')		
 class ModifySlot(View):
-	form = SlotCreationForm()
 	template = 'manager_iface/DisplayForm.html'	
 	
 	def get_room(self,roomno):
@@ -318,14 +327,22 @@ class ModifySlot(View):
 			this_roomno = request.POST['roomNo']
 			this_start = request.POST['start']
 			this_slot = Slot.objects.filter(room__room_no=this_roomno, 
-											start_time=this_start)[0]							
+											start_time=this_start)[0]		
+			
+			room_choices = [(self.get_room(this_roomno), this_roomno)]								
+			self.form = SlotCreationForm(for_modification=True,
+											room_inst=self.get_room(this_roomno),
+											slot_inst=this_slot,
+											choices = room_choices
+											)
+																
 			cont = dict()			
 			#Setting existing values for the slot
-			self.form.fields['room'].choices = [(self.get_room(this_roomno), this_roomno)]
+			'''self.form.fields['room'].choices = [(self.get_room(this_roomno), this_roomno)]
 			self.form.fields['room'].initial = this_roomno
 			self.form.fields['room'].disabled = True
 			self.form.fields['start_time'].initial = this_slot.start_time.strftime("%H:%M")
-			self.form.fields['end_time'].initial = this_slot.end_time.strftime("%H:%M")			
+			self.form.fields['end_time'].initial = this_slot.end_time.strftime("%H:%M")	'''		
 			# Exploiting the deep-copied field attribute of Form Class, that was created using its MetaClass
 			cont['form'] = self.form
 			cont['prompt'] = "Modify Slot"
@@ -335,25 +352,46 @@ class ModifySlot(View):
 			cont['extra'] = True
 			return render(request, self.template, context=cont)				
 		else:
-			self.form = SlotCreationForm(request.POST)
-			this_roomno = request.POST['room']
+			rooms = Room.objects.all()
+			room_choices = list()
+			for i in list(rooms):
+				room_choices.append((i, i.room_no))
+			self.form = SlotCreationForm(request.POST, choices=room_choices)
+			this_roomno = request.POST['room']	
 			this_start = request.POST['start']    #OLD DATA - BEFORE MODIFICATION
 			this_slot = Slot.objects.filter(room__room_no=this_roomno, 
 											start_time=this_start)[0]  
-													  						 
-			self.form.fields['room'].choices = [(self.get_room(this_roomno), this_roomno)]
 			# Exploiting the deep-copied field attribute of Form Class, that was created using its MetaClass
 			# Necessary to refill choices since the form is Re-Instantiated here
 			try:
-				if(self.form.is_valid()):	
+				if(self.form.is_valid()):						
 					slot_start = self.form.cleaned_data['start_time'].strftime("%H:%M")  # In required format
 					slot_end = self.form.cleaned_data['end_time'].strftime("%H:%M")  # In required format
 					if(slot_start>=slot_end):
 						raise ValueError("Start Time should be before End Time")
 					if(self.slot_intrudes(self.form.cleaned_data['room'],slot_start,slot_end)):
 						raise ValueError("Slot timings clash with another!")
-					# Modify the IsolatedDatabase Accordingly
+					# the IsolatedDatabase is modified accordingly using signals
 					# Modifying slots	
+					
+					"""If a slot is changed in such a way that the new start_time of the 
+					slot is before the present time and its old start_time was after present_time
+					Then the corresponding reservations today would have moved from the future into the
+					past! Such reservations have to be deleted and not modified
+					"""
+					
+					now = datetime.time(datetime.now())
+					check = datetime.time(datetime.strptime(slot_start,"%H:%M"))
+					if(check<now):
+						today = datetime.date(datetime.now())
+						affected_res = Reservation.objects.filter(
+										 			slot=this_slot, 
+													date=today,
+													slot__start_time__gte=now)
+						for i in list(affected_res):
+							i.delete()	# IsoResData is automatically set to cancelled through a signal						
+					
+					# Modifying other slots
 					old_start = this_slot.start_time
 					this_slot.start_time = slot_start
 					this_slot.end_time = slot_end
@@ -369,7 +407,8 @@ class ModifySlot(View):
 				messages.add_message(request, messages.ERROR, prob)
 				return HttpResponseRedirect(reverse('ManageRooms'))
 				
-		
+
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')		
 class DeleteSlot(View):
 	
 	def post(self,request):
@@ -384,6 +423,7 @@ class DeleteSlot(View):
 		return HttpResponseRedirect(reverse('ManageRooms'))	
 		
 
+@method_decorator(group_required('ManagerPrivilege',redirect_view='Login'), name='dispatch')
 class ViewReservations(View):
 	template = "manager_iface/ViewBookings.html"
 

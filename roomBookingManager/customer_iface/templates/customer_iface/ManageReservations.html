@@ -22,7 +22,7 @@
     {% csrf_token %}
     <input type="text" hidden="True" />
     </form>
-    <input type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+    <input class="profileLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
 </td>
     
 {% for cell in other %}
@@ -39,10 +39,10 @@
 <input type="text" name="date" value={{date}} readonly="readonly" hidden="True" />
 </form> 
 
-<td><input type="submit" name="action" value="Delete" class="innerSubmit" form={{row}} onclick="return confirmAction('You are attempting to book a room.')"/></td>
+<td><input type="submit" name="action" value="Delete" class="innerSubmit" form={{row}} onclick="return confirmAction('You are attempting to book a room.')" /></td>
 
 {%else%}   <!--Nothing to display!-->
-<center><label class="descriptor"><b>No Reservations to display</b></label></center>
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
 <br /><br />
 {%endif%}
 
@@ -78,7 +78,7 @@
 </table></center>
 
 {%else%}   <!--Nothing to display!-->
-<center><label class="descriptor"><b>No Reservations to display</b></label></center>
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
 <br /><br />
 {%endif%}
 

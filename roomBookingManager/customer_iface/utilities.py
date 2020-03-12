@@ -107,4 +107,29 @@ def slot_modified_mail(iso_reserve):
 	try:
 		return send_mail(subject,body,from_,[to],auth_user=from_,auth_password=pwd)
 	except:
-		return -1					
+		return -1		
+		
+def send_generated_key(emp_id_inst):
+	config = configparser.ConfigParser()
+	config.read(os.path.join(settings.BASE_DIR,'customer_iface','configs','data_config.ini'))
+	path = os.path.join(settings.BASE_DIR,'customer_iface','configs','data_config.ini')
+	read = config.items('DATA')
+	from_ = read[0][1]
+	pwd = read[1][1]
+	to = emp_id_inst.creator.email
+    
+	body = """Hey {0},\nYou generated a new employee. The details are as follows:\n\n
+    Employee Type: {1}\n
+    Employee ID: {2}\n"""
+	name = emp_id_inst.creator.name
+	typ = emp_id_inst.emp_type
+	gen_id = emp_id_inst.emp_id
+    
+	body += """Login to our Room Booking website to view/delete employee IDs"""
+	body = body.format(name, typ, gen_id)
+         
+	subject = "New Employee ID Generated"
+	try:
+		return send_mail(subject,body,from_,[to],auth_user=from_,auth_password=pwd)
+	except:
+		return -1										

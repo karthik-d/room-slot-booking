@@ -4,70 +4,75 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.utils.decorators import method_decorator
+from roomBookingManager.decorators import group_required
 from users.models import Customer
 from manager_iface.models import Slot, Room
 from .models import Reservation, IsolatedResData
 from .forms import SlotFindForm
+  
 
+@method_decorator(group_required('CustomerPrivilege',redirect_view='Login'), name='dispatch')
 class FindSlot(View):
-		form = SlotFindForm()
-		template = "customer_iface/DisplaySlots.html"
-		
-		def sep_by_room(self,slots):
-			form_row = [('a'+str(x+1)) for x in range(len(slots))] 
-			slot_by_room = dict()
-			for sl in range(len(slots)):
-				sl_data = [slots[sl].start_time.strftime("%H:%M"),
-		                   slots[sl].end_time.strftime("%H:%M")]         
-				if(slots[sl].room.room_no not in slot_by_room):
-					slot_by_room[slots[sl].room.room_no] = [[sl_data,form_row[sl]]]
-				else:
-					slot_by_room[slots[sl].room.room_no].append([sl_data,form_row[sl]])
-			return slot_by_room		
-		
-		def slot_match(self,slot1,slot2):
-			if(slot1.start_time==slot2.start_time):
-				if(slot1.room.room_no==slot2.room.room_no):
-					return True
-			return False		
-		
-		def post(self,request,*args,**kwargs):
-			self.form = SlotFindForm(request.POST)
-			if(self.form.is_valid()):		
-				date = self.form.cleaned_data['date']
-				today = datetime.date(datetime.now())
-				now = datetime.time(datetime.now())
-				if(date==today):
-					slots = list(Slot.objects.filter(start_time__gt=now)) # Exclude slots whose start_time has passed
-				else:
-					slots = list(Slot.objects.all())	
-				res_slots =  list(map(lambda x:x.slot,list(Reservation.objects.filter(date=date))))
-				avl_slots = list()
-				for i in slots:
-				    if(i not in res_slots):
-				    	# Ensure Advance Reservation Period
-				    	if(today+timedelta(days=i.room.advance_period)>=date):
-				        	avl_slots.append(i)
-					        
-				slot_by_room = self.sep_by_room(avl_slots)			
-				cont = dict()
-				cont['form'] = self.form
-				cont['slots'] = slot_by_room
-				cont['display'] = bool(len(avl_slots))
-				cont['date'] = self.form.cleaned_data['date'].strftime("%Y-%m-%d")
-				return render(request,self.template,context=cont)
-			else:
-				messages.add_message(request, messages.ERROR, prob)
-				return HttpResponseRedirect(reverse('FindSlot'))	
-			
+	form = SlotFindForm()
+	template = "customer_iface/DisplaySlots.html"
 	
-		def get(self,request,*args,**kwargs):		
+	def sep_by_room(self,slots):
+		form_row = [('a'+str(x+1)) for x in range(len(slots))] 
+		slot_by_room = dict()
+		for sl in range(len(slots)):
+			sl_data = [slots[sl].start_time.strftime("%H:%M"),
+	                   slots[sl].end_time.strftime("%H:%M")]         
+			if(slots[sl].room.room_no not in slot_by_room):
+				slot_by_room[slots[sl].room.room_no] = [[sl_data,form_row[sl]]]
+			else:
+				slot_by_room[slots[sl].room.room_no].append([sl_data,form_row[sl]])
+		return slot_by_room		
+	
+	def slot_match(self,slot1,slot2):
+		if(slot1.start_time==slot2.start_time):
+			if(slot1.room.room_no==slot2.room.room_no):
+				return True
+		return False		
+	
+	def post(self,request,*args,**kwargs):
+		self.form = SlotFindForm(request.POST)
+		if(self.form.is_valid()):		
+			date = self.form.cleaned_data['date']
+			today = datetime.date(datetime.now())
+			now = datetime.time(datetime.now())
+			if(date==today):
+				slots = list(Slot.objects.filter(start_time__gt=now)) # Exclude slots whose start_time has passed
+			else:
+				slots = list(Slot.objects.all())	
+			res_slots =  list(map(lambda x:x.slot,list(Reservation.objects.filter(date=date))))
+			avl_slots = list()
+			for i in slots:
+			    if(i not in res_slots):
+			    	# Ensure Advance Reservation Period
+			    	if(today+timedelta(days=i.room.advance_period)>=date):
+			        	avl_slots.append(i)
+				        
+			slot_by_room = self.sep_by_room(avl_slots)			
 			cont = dict()
 			cont['form'] = self.form
-			cont['prompt'] = "Room Reservation"
-			return render(request, self.template, context=cont)
+			cont['slots'] = slot_by_room
+			cont['display'] = bool(len(avl_slots))
+			cont['date'] = self.form.cleaned_data['date'].strftime("%Y-%m-%d")
+			return render(request,self.template,context=cont)
+		else:
+			messages.add_message(request, messages.ERROR, prob)
+			return HttpResponseRedirect(reverse('FindSlot'))	
+		
+
+	def get(self,request,*args,**kwargs):		
+		cont = dict()
+		cont['form'] = self.form
+		cont['prompt'] = "Room Reservation"
+		return render(request, self.template, context=cont)
       
 
+@method_decorator(group_required('CustomerPrivilege',redirect_view='Login'), name='dispatch')
 class ReserveSlot(View):
 
     def post(self,request,*args,**kwargs):
@@ -87,13 +92,14 @@ class ReserveSlot(View):
         val = new_reserve.save()        
         # Simoultaneously update the isolated reservation database
         # This is done using a pre_save signal attached to Reservation class
-        messages.add_message(request,messages.SUCCESS,"Room Reserved. Email notification to Customer was attempted")
+        messages.add_message(request,messages.SUCCESS,"Room Reserved. Email notification was attempted")
         return HttpResponseRedirect(reverse('FindSlot'))
 
     def get(self,request,*args,**kwargs):
         return HttpRespponseRedirect(reverse('FindSlot'))
 
 
+@method_decorator(group_required('CustomerPrivilege',redirect_view='Login'), name='dispatch')
 class ManageReservations(View):
 	template = "customer_iface/DisplayReservations.html"
 
@@ -152,7 +158,8 @@ class ManageReservations(View):
 		cont['cancel'] = can_res
 		cont['display'] = (bool(len(future_res)),bool(len(past_res)),bool(len(can_res)))
 		return render(request,self.template,context=cont)
-		
+
+@method_decorator(group_required('CustomerPrivilege',redirect_view='Login'), name='dispatch')		
 class DeleteReservation(View):
 	
 	def post(self,request,*args,**kwargs):
