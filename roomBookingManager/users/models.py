@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 		
 class UserManager(BaseUserManager):    
 	"""Manager class for the User model, overriding the deault manager class
+	to customise the fileds and redefine the create_user and create_superuser functions
 	"""
 	
 	use_in_migrations = True
@@ -53,7 +54,8 @@ class UserManager(BaseUserManager):
 		
 
 class User(AbstractBaseUser, PermissionsMixin):  # PermissionsMixin to include the permission parameters of User model
-	"""Customizing/overriding the pre-defined User class
+	"""Customizing/overriding the pre-defined User class, to facilitate login by email id and store only 
+	necessary fields. Uses in a one-to-one relation with the User TYpe classes like Customer, Admin, etc.
 	"""
 	 
 	email = models.EmailField(unique=True,default=None,null = False) 
@@ -76,8 +78,12 @@ class User(AbstractBaseUser, PermissionsMixin):  # PermissionsMixin to include t
 	objects = UserManager()    # Declaring the Manager Class	
 						
 
-class Customer(models.Model):    # CREATING SAME RELATED NAME FOR BOTH MANAGER AND CUSTOMER W.R.T USER
-								 # FOR EASY ACCESS OF SUB-INSTANCE FROM USER MODEL
+class Customer(models.Model):   
+	""" customer model to create a database that stores details pertaining to 
+	a customer type user. It has a one-to-one relation with members of the User class
+	that stores name and login details - fields common to all types of users
+	"""
+	
 	instance = models.OneToOneField(get_user_model(),primary_key=True,
 									 related_name="customer", 
 									 on_delete=models.CASCADE,
@@ -97,8 +103,9 @@ class Customer(models.Model):    # CREATING SAME RELATED NAME FOR BOTH MANAGER A
 
 class EmployeeID(models.Model):
 	""" Model to store employee IDs generated so far and the admin who generated it as well as who has 
-	been assigned to it. Currently Managers are the only type of employees. Scenario can be extended to 
-	other types in future by creating a parent model to all possible designations, called "Employee"
+	been assigned to it. Currently Managers and admins are the only types of employees. Scenario can be extended to 
+	any number of user types by altering the USER+REFIXES in the constants.py file and adding necessary user type models
+	like Manager, Admin, etc
 	"""
 	
 	emp_id = models.CharField(max_length=10, primary_key=True, default=None)  
@@ -118,8 +125,8 @@ class EmployeeID(models.Model):
 		
 class Admin(models.Model):
 	""" Model to store details of "superuser" privileged user, who can generate employee ids and delete
-	employees. Only a superuser can create another superuser. One superuser is created explicitly, initially
-	with admin ID - "ADM001". Admins need not be Employees
+	employees. One superuser is created explicitly, initially
+	with admin ID - "ADM001". This is the BASE_ADMIN and cannot be delete. His creastor is NULL/None
 	"""
 
 	instance = models.OneToOneField(get_user_model(), 
@@ -139,8 +146,12 @@ class Admin(models.Model):
 		return self.instance.name  		
 		
 
-class Manager(models.Model):# CREATING SAME RELATED NAME FOR BOTH MANAGER AND CUSTOMER W.R.T USER
-								 # FOR EASY ACCESS OF SUB-INSTANCE FROM USER MODEL
+class Manager(models.Model):
+	""" Manager model to create a database that stores details pertaining to 
+	a manager type user. It has a one-to-one relation with members of the User class
+	that stores name and login details - fields common to all types of users
+	"""
+	
 	instance = models.OneToOneField(get_user_model(),primary_key=True,
 									related_name="manager",
 									on_delete=models.CASCADE,

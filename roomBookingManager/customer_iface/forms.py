@@ -14,5 +14,10 @@ class SlotFindForm(forms.Form):
 		self.fields['date'].widget=forms.TextInput(attrs={'type':'date','min':date_now})
 	
 	date = forms.DateField(required=True,label="Date",widget=forms.TextInput(attrs={'type': 'date'}))
+	
+	def clean_date(self):
+		data = self.cleaned_data['date']
+		if(data<datetime.date(datetime.now())):
+			raise ValueError("Date Must Be In Future")
 		
 	

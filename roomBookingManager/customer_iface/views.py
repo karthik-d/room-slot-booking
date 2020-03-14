@@ -37,32 +37,35 @@ class FindSlot(View):
 	
 	def post(self,request,*args,**kwargs):
 		self.form = SlotFindForm(request.POST)
-		if(self.form.is_valid()):		
-			date = self.form.cleaned_data['date']
-			today = datetime.date(datetime.now())
-			now = datetime.time(datetime.now())
-			if(date==today):
-				slots = list(Slot.objects.filter(start_time__gt=now)) # Exclude slots whose start_time has passed
+		try:
+			if(self.form.is_valid()):		
+				date = self.form.cleaned_data['date']
+				today = datetime.date(datetime.now())
+				now = datetime.time(datetime.now())
+				if(date==today):
+					slots = list(Slot.objects.filter(start_time__gt=now)) # Exclude slots whose start_time has passed
+				else:
+					slots = list(Slot.objects.all())	
+				res_slots =  list(map(lambda x:x.slot,list(Reservation.objects.filter(date=date))))
+				avl_slots = list()
+				for i in slots:
+					if(i not in res_slots):
+						# Ensure Advance Reservation Period
+						if(today+timedelta(days=i.room.advance_period)>=date):
+							avl_slots.append(i)
+						    
+				slot_by_room = self.sep_by_room(avl_slots)			
+				cont = dict()
+				cont['form'] = self.form
+				cont['slots'] = slot_by_room
+				cont['display'] = bool(len(avl_slots))
+				cont['date'] = self.form.cleaned_data['date'].strftime("%Y-%m-%d")
+				return render(request,self.template,context=cont)
 			else:
-				slots = list(Slot.objects.all())	
-			res_slots =  list(map(lambda x:x.slot,list(Reservation.objects.filter(date=date))))
-			avl_slots = list()
-			for i in slots:
-			    if(i not in res_slots):
-			    	# Ensure Advance Reservation Period
-			    	if(today+timedelta(days=i.room.advance_period)>=date):
-			        	avl_slots.append(i)
-				        
-			slot_by_room = self.sep_by_room(avl_slots)			
-			cont = dict()
-			cont['form'] = self.form
-			cont['slots'] = slot_by_room
-			cont['display'] = bool(len(avl_slots))
-			cont['date'] = self.form.cleaned_data['date'].strftime("%Y-%m-%d")
-			return render(request,self.template,context=cont)
-		else:
-			messages.add_message(request, messages.ERROR, prob)
-			return HttpResponseRedirect(reverse('FindSlot'))	
+				raise ValueError("Invalid Input Detetcted")
+		except ValueError as prob:
+			messages.add_message(request, messages.ERROR, prob)	
+			return HttpResponseRedirect(render('FindSlot'))	
 		
 
 	def get(self,request,*args,**kwargs):		

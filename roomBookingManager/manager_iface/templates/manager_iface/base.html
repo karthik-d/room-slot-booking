@@ -3,7 +3,7 @@
 <title>Task Assigner</title>
 {% load static %}
 {% load extra_tags %}
-<link rel="stylesheet" type="text/css" href="{% static 'manager_iface/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'messenger/style.css' %}">
 {%block head%}
 {%endblock%}
 <script>
@@ -72,7 +72,7 @@ function confirmAction(details){
 
 {%endif%}
 
-<a class="left" href="/messenger/viewMessages">Messages</a>
+<a class="left" href="/messages/view-messages">Messages</a>
 
 <a href="/users/logout" class="right rounded" >Logout</a>
 <a href="/users/change-pwd" class="right rounded" >Change Password</a>

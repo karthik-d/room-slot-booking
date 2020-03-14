@@ -25,6 +25,7 @@ urlpatterns = [
     path('manager/', include('manager_iface.urls')),
     path('users/', include('users.urls')),
     path('custom-admin/', include('admin_iface.urls')),
+    path('messages/', include('messenger.urls')),
     path('api/', include('api.urls')),
     path('home', MainLanding.as_view(), name='home'),
 ]

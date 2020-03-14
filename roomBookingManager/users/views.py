@@ -12,7 +12,7 @@ from .models import Customer, Manager, Admin, User, EmployeeID
 from .forms import CustomerRegisterForm, ManagerRegisterForm, AdminRegisterForm, PasswordChangeForm
 
 # @class_decorator(anonymous_required(redirect_url="/users/login"))
-@method_decorator(anonymous_required('ManagerRegistration'), name='dispatch')
+@method_decorator(anonymous_required('home'), name='dispatch')
 class RegisterCustomer(View):
 	""" Class based view to handle registation of a new Customer, collecting data 
 	and updating the User and relevant databases
@@ -57,7 +57,7 @@ class RegisterCustomer(View):
 				cust_group.user_set.add(user)
 
 				messages.add_message(request, messages.SUCCESS, 'Customer Registered Successfully!')
-				return HttpResponseRedirect(reverse('CustomerRegistration') )
+				return HttpResponseRedirect(reverse('Login') )
 			else:
 				raise ValueError("Form is invalid")	
         
@@ -72,7 +72,7 @@ class RegisterCustomer(View):
 		return render(request, self.template, context=cont)
 
 
-@method_decorator(anonymous_required('ManagerRegistration'), name='dispatch')		
+@method_decorator(anonymous_required('home'), name='dispatch')		
 class RegisterManager(View):
 	""" Class based view to handle registation of a new Manager, collecting data 
 	and updating the User and relevant databases
@@ -144,7 +144,7 @@ class RegisterManager(View):
 				man_group.user_set.add(user)
 
 				messages.add_message(request, messages.SUCCESS, 'Manager Registered Successfully!')
-				return HttpResponseRedirect(reverse('ManagerRegistration') )
+				return HttpResponseRedirect(reverse('Login') )
 			else:
 				raise ValueError("Form is invalid")	
         
@@ -159,7 +159,7 @@ class RegisterManager(View):
 		return render(request, self.template, context=cont)	
 		
 
-@method_decorator(anonymous_required('AdminRegistration'), name='dispatch')		
+@method_decorator(anonymous_required('home'), name='dispatch')		
 class RegisterAdmin(View):
 	""" Class based view to handle registation of a new Admin, collecting data 
 	and updating the User and relevant databases
@@ -291,7 +291,7 @@ class ChangePassword(View):
 
 @method_decorator(login_required, name='dispatch')
 class ViewUserProfile(View):
-	"""Class based model to view a users profile, after ensuring that 
+	"""Class based View to view a users profile, after ensuring that 
 	the requesting user has permission to do so
 	"""
 	
@@ -299,6 +299,9 @@ class ViewUserProfile(View):
 	resolve_gender = {"M":"Male","F":"Female"}
 	
 	def post(self,request,*args,**kwargs):
+		""" Post method works based on the user's email ID
+		"""
+		
 		email = list(request.POST.keys())[1]
 		if(email=="csrfmiddlewaretoken"):
 			email = list(request.POST.keys())[0]
@@ -342,14 +345,69 @@ class ViewUserProfile(View):
 		        	"Email":targetUser.email,
 		        	"Gender":gender,
 		        	"Type":typ,
-		        	"ID":person_id}	
+		        	"ID":person_id,
+		        	"UserID":targetUser.id}	
+		        		
+		except ValueError as prob:
+				val = request.user.get_all_permissions()
+				messages.add_message(request, messages.SUCCESS, 'Permission Denied') 
+				return HttpResponseRedirect(reverse('home'))     
+		return render(request,self.template,context=cont)
+	
+	def get(self, request, user_id, *args, **kwargs):
+		""" Get method works based on the user's id - assigned automatically during user
+		creation by django models
+		"""
+		
+		try:
+		    targetUser = list(User.objects.filter(id=user_id))[0]        # User to be displayed
+		except IndexError:
+		    messages.add_message(request, messages.ERROR, "User Could Not Be Found!")
+		    return HttpResponseRedirect(reverse('home'))
+		    
+		targetGroup=list(Group.objects.filter(user=targetUser))[0].name   # Group of user to be displayed	
+		
+		try:
+			if(targetGroup=="CustomerPrivilege"):
+				if(request.user.has_perm('users.can_view_customer')):				
+					targetSpecific = list(Customer.objects.filter(instance=targetUser))[0]  # Customer instance
+					typ = "Customer"
+					gender = self.resolve_gender[targetSpecific.gender]
+					person_id = "Not Applicable"
+				else:
+					raise ValueError('Permission Denied')
+					
+			elif(targetGroup=="ManagerPrivilege"):
+				if(request.user.has_perm('users.can_view_employee')):	
+					targetSpecific = list(Manager.objects.filter(instance=targetUser))[0]  # Manager Instance
+					typ = "Manager"
+					gender = targetSpecific.gender
+					person_id = targetSpecific.emp_id
+				else:
+					raise ValueError('Permission Denied')
+				
+			elif(targetGroup=="AdminPrivilege"):
+				if(request.user.has_perm('users.can_view_admin')):			
+					targetSpecific = list(Admin.objects.filter(instance=targetUser))[0]  # Admin Instance
+					typ = "Admin"    
+					gender = "Not Specified"
+					person_id = targetSpecific.emp_id.emp_id
+				else:
+					raise ValueError('Permission Denied')
+			
+			cont = {"Name":targetUser.name,
+		        	"Email":targetUser.email,
+		        	"Gender":gender,
+		        	"Type":typ,
+		        	"ID":person_id,
+		        	"UserID":targetUser.id}	
 		        		
 		except ValueError as prob:
 				val = request.user.get_all_permissions()
 				messages.add_message(request, messages.SUCCESS, 'Permission Denied') 
 				return HttpResponseRedirect(reverse('home'))     
 
-		return render(request,self.template,context=cont)	
+		return render(request,self.template,context=cont)
 
 
 # @class_decorator(login_required(login_url='/users/login',redirect_field_name="/"))

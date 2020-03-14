@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserHandler, UserDetail, CustomerHandler, ManagerHandler, RoomHandler, SlotHandler, RoomDetail, SlotDetail, ManagerDetail, CustomerDetail, AllReservations, PastReservations, FutureReservations, OngoingReservations, CancelledReservations, InactiveReservationDetail, ActiveReservationManage
+from .views import UserHandler, UserDetail, CustomerHandler, ManagerHandler, AdminHandler, RoomHandler, SlotHandler, RoomDetail, SlotDetail, ManagerDetail, CustomerDetail, AdminDetail, AllReservations, PastReservations, FutureReservations, OngoingReservations, CancelledReservations, InactiveReservationDetail, ActiveReservationManage
 
 urlpatterns = [
 	path('user-handler/', UserHandler.as_view(), name='user-handler'),
@@ -9,6 +9,8 @@ urlpatterns = [
     path('cust-detail/<int:id>/', CustomerDetail.as_view(), name='customer-detail'),
     path('manager-handler/', ManagerHandler.as_view(), name='manager-handler'),
     path('manager-detail/<int:id>/', ManagerDetail.as_view(), name='manager-detail'),
+    path('admin-handler/', AdminHandler.as_view(), name='admin-handler'),
+    path('admin-detail/<int:id>/', AdminDetail.as_view(), name='admin-detail'),
     path('room-handler/', RoomHandler.as_view(), name='room-handler'),
     path('slot-handler/', SlotHandler.as_view(), name='slot-handler'),
     path('room-detail/<str:room_no>/', RoomDetail.as_view(), name='room-detail'),

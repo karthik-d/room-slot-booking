@@ -2,23 +2,15 @@
 
 {% block content %} 
 
-
-<!---
-
 <form method="GET" id="f1">
 {% csrf_token %}
-<input type="hidden" name="RegNum" value={{RNum}} />
+<input type="hidden" name="RegNum" value={{User_ID}} />
 </form>
 
-
-
 <center><label class="descriptor">{{Type}} : {{Name}}</label></center> 
-<center><a href="/messenger/openConversation-{{RNum}}" class="sendMess" >Send a Message</a>
-<a href="mailto:{{Email}}?&body=Contacted through Volunteers-Webiste" class="sendMess depend">Send an Email</a></center>
+<center><a href="/messages/open-conv/{{UserID}}" class="sendMess" >Send a Message</a>
+<a href="mailto:{{Email}}?&body=Contacted through RoomBooking-Webiste" class="sendMess depend">Send an Email</a></center>
 
-!--->
-
-<div> <center><label class="descriptor">{{Type}} : {{Name}}</label></center> </div>
 
 <center><table class="UserDisplay" border="0">
 <tr>

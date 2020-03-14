@@ -11,6 +11,7 @@ urlpatterns = [
 	path('logout', Logout.as_view(), name="Logout"),
 	path('login', anonymous_required()(LoginView.as_view(template_name="users/LogForm.html")), name="Login"),
 	path('profile', ViewUserProfile.as_view(), name="ViewProfile"),
+	path('profile/<int:user_id>', ViewUserProfile.as_view(), name="ViewProfileById"),
 	]
 
 				

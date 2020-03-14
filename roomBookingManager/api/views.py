@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from django.shortcuts import get_object_or_404
-from .serializers import UserSerializer, CustomerSerializer, ManagerSerializer, RoomSerializer, SlotSerializer, ReservationLinkSerializer, ReservationSerializer, ActiveReservationSerializer
-from users.models import User, Customer, Manager
+from .serializers import UserSerializer, CustomerSerializer, ManagerSerializer, AdminSerializer, RoomSerializer, SlotSerializer, ReservationLinkSerializer, ReservationSerializer, ActiveReservationSerializer
+from users.models import User, Customer, Manager, Admin
 from manager_iface.models import Room, Slot
 from customer_iface.models import IsolatedResData, Reservation
 from datetime import datetime
@@ -118,7 +118,47 @@ class ManagerDetail(generics.RetrieveDestroyAPIView):     # Read-Only for an ind
 			return Response({"message": "Manager not found."}, status=404)	
 		else:	
 			user.delete()
-			return Response({"message": "Manager and relevant data have been deleted."}, status=204)				
+			return Response({"message": "Manager and relevant data have been deleted."}, status=204)	
+			
+class AdminHandler(APIView):    # For a list of users
+	"""
+    List all snippets, or create a new snippet.
+    """
+	def get(self, request, format=None):
+		users = Admin.objects.all()
+		serializer = AdminSerializer(users, many=True, context={'request':request})    # Since there can be multiple users
+		return Response(serializer.data)
+
+	def post(self, request, format=None):
+		serializer = AdminSerializer(data=request.data, context={'request':request})     # .data alternative to POST, 
+		if serializer.is_valid():						      # can handle arbitrary data
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+        
+	        
+class AdminDetail(generics.RetrieveDestroyAPIView):     # Read-Only for an individual manager
+	queryset = Admin.objects.all()
+	serializer_class = AdminSerializer  
+	custom_lookup_field = 'id'
+    
+	def get_object(self):     # OVERRIDING the get_object method to pdefine customised object lookup
+		queryset = User.objects.all()
+		filter = dict()
+		field = self.custom_lookup_field
+		filter[field] = self.kwargs[field]
+		user = get_object_or_404(queryset, **filter)
+		self.check_object_permissions(self.request, user)
+		return user.admin
+		
+	def delete(self, request, id):
+		try:
+			user = User.objects.get(id=id)
+		except User.DoesNotExist:
+			return Response({"message": "Admin not found."}, status=404)	
+		else:	
+			user.delete()
+			return Response({"message": "Admin and relevant data have been deleted."}, status=204)							
     
 class RoomHandler(generics.RetrieveAPIView):
 	"""

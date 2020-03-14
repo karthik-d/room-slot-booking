@@ -1,0 +1,52 @@
+{% extends "messenger/base.html" %}
+
+{% block content %} 
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<center><label class="descriptor">Conversation With <a href="/users/profile/{{RNum}}">{{other}}</a></label></center>
+
+<form id="f1" method="POST">
+{% csrf_token %}
+<input type="hidden" name="targetUser" value={{RNum}} />
+</form>
+
+<div>
+<table class="convDisp">
+<tr>
+<th colspan="2">Received Messages</th>
+</tr>
+{% for time,mess in recv %}
+<tr>
+<td>@{{time}} : {{mess}}</td>
+</tr>
+{% endfor %}
+</table>
+
+<table class="convDisp">
+<tr>
+<th colspan="2">Sent Messages</th>
+</tr>
+{% for time,mess in sent %}
+<tr>
+<td>@{{time}} : {{mess}}</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+<input type="text" name="body" class="bottomFix" placeholder="Enter text to send" form="f1"/>
+<input type="submit" name="toSend" class="bottomFix" value="SEND"  form="f1" />
+
+{% endblock %}
+
+
+
+

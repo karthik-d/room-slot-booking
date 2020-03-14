@@ -43,7 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
 					'gender':user.manager.gender,
 					'phone':user.manager.phone}
 		elif(user_type=='admin'):
-			return {'admin_id':user.admin.admin_id}
+			return {'emp_id':user.admin.emp_id.emp_id}
 		else:
 			return {"ERROR":"Unknown User Type"}				
 					
@@ -191,8 +191,33 @@ class ManagerSerializer(serializers.HyperlinkedModelSerializer):
 			ret[i+1] = sub_dict
 		return ret	
 			
+class AdminSerializer(serializers.HyperlinkedModelSerializer):
+
+	url = serializers.SerializerMethodField()
+	instance = UserSerializer(read_only=True)  
+	# Defining a METHOD FIELD to generate URL based on 
+	# User class since primary key for customer is an object
+	# CHANGE TO READ_WRITE	
 	
-	"""ADD RESERVATIONS TO EACH USER"""	
+	def __init__(self,*args,**kwargs):
+		fields = kwargs.pop('fields',None)
+		super(ManagerSerializer, self).__init__(*args,**kwargs)
+		if(fields):
+			self.fields = fields		
+	
+	class Meta:
+		model = Manager
+		fields = ['url','instance']
+		
+	def get_url(self, adm):
+		user_id = adm.instance.id
+		rel_url = reverse('user-detail',args=[user_id])   # Return relative URL for WebSite
+		rel_url = rel_url.replace('user','admin')
+		scheme = self.context['request'].META['wsgi.url_scheme']
+		netloc = self.context['request'].META['HTTP_HOST']
+		domain = urlunparse((scheme,netloc,'/','','',''))
+		url = urljoin(domain,rel_url)
+		return url
 				
 class RoomSerializer(serializers.HyperlinkedModelSerializer):
 	

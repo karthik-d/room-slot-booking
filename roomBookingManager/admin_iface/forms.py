@@ -6,7 +6,7 @@ class EmployeeIDGeneration(forms.Form):
 	designation = forms.ChoiceField(choices=tuple(zip(EMPLOYEE_PREFIXES.keys(),map(str.title,EMPLOYEE_PREFIXES.keys()))),
 									label="Employee Designation",
 									required=True)  
-	# Only one designation available now
+	# Only two designations available now
 	password = forms.CharField(max_length=20,widget=forms.PasswordInput,label="Confirm Your Password",required=True)
 	
 	def clean_password(self):

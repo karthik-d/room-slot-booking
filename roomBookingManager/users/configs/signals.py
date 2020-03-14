@@ -16,6 +16,7 @@ def create_groups(**kwargs):
     											content_type=targetModel)
 	if(created):
 		adminGroup.permissions.add(view_admin_perm)
+		managerGroup.permissions.add(view_admin_perm)
 											
 	view_employee_perm, created = Permission.objects.get_or_create(codename='can_view_employee', 
     												name='Can View Employee',

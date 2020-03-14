@@ -46,11 +46,11 @@ class CreateRoom(View):
 				return HttpResponseRedirect(reverse('RoomCreation'))
 				
 			else:
-				raise ValueError("Invalid Form!")
+				raise ValueError("Unknow Error Occurred!")
 				
 		except ValueError as prob:
 			messages.add_message(request, messages.ERROR, prob)
-			return HttpResponseRedirect(reverse('RoomCreation'))
+			return HttpResponseRedirect(reverse('home'))
 						
 	
 	def get(self,request,*args,**kwargs):
@@ -92,9 +92,9 @@ class CreateSlot(View):
 		return False						
 	
 	def post(self,request,*args,**kwargs):
-		self.form = SlotCreationForm(request.POST)
 		rooms_to_disp = self.own_rooms(request)
-		self.form.fields["room"].choices = tuple(zip(rooms_to_disp,map(str,rooms_to_disp))) 
+		choices = tuple(zip(rooms_to_disp,map(str,rooms_to_disp)))
+		self.form = SlotCreationForm(request.POST, choices=choices)
 		# Necessary to refill choices since the form is Re-Instantiated here
 		try:
 			if(self.form.is_valid()):	
@@ -195,9 +195,10 @@ class ManageRooms(View):
 		form_row = ['c'+str(x+1) for x in range(len(other_rooms))]   
 		data_rooms = [(other_rooms[i].room_no,
                      other_rooms[i].advance_period,
-                     other_rooms[i].manager.instance.name,
                      other_rooms[i].description) for i in range(len(other_rooms))]
-		other_rooms =  list(zip(form_row,data_rooms))            
+		manager_links = [[i.manager.instance.name,                 
+						i.manager.instance.email] for i in other_rooms]
+		other_rooms =  list(zip(form_row,data_rooms,manager_links))            
                      
 		cont = dict()   
 		cont['ownRooms'] = own_rooms

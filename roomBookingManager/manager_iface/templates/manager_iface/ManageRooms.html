@@ -51,16 +51,23 @@
 <tr>
 <th>Room Number</th>
 <th>Max. Advance Reservation</th>
-<th>Manager</th>
 <th>Description</th>
+<th>Manager</th>
 <th>Action</th>
 </tr>
 
-{% for row,t in otherRooms %}
+{% for row,t,man in otherRooms %}
 <tr>
 {% for cell in t %}
 <td>{{cell}}</td>
 {% endfor %}
+
+
+<form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+</form>
+<td><input class="contactLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" /></td>
 
 <form id={{row}} method="POST" action="/manager/manage-slots">  <!--Pseudoform!-->
 {% csrf_token %}
