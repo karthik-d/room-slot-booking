@@ -1,0 +1,89 @@
+{% extends "customer_iface/base.html" %}
+
+{% block content %} 
+
+<center><label class="descriptor"><b>Upcoming Reservations</b></label></center>
+
+{% if display.0 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Room No.</th>
+<th>Date</th>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Manager</th>
+<th>Action</th>
+</tr>
+
+{% for man,other,row in future_res %}
+<tr>
+<td><form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+    </form>
+    <input class="profileLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td>
+    
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table></center>
+
+<form id={{row}} method="POST" action="delete-booking">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{k}} readonly="readonly" hidden="True" />
+<input type="text" name="start" value={{inner.0.0}} readonly="readonly" hidden="True" />
+<input type="text" name="date" value={{date}} readonly="readonly" hidden="True" />
+</form> 
+
+<td><input type="submit" name="action" value="Delete" class="innerSubmit" form={{row}} onclick="return confirmAction('You are attempting to book a room.')" /></td>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
+<br /><br />
+{%endif%}
+
+<!-- ------------------------------------------------------------------------------------------------------ !-->
+
+<center><label class="descriptor"><b>Past Reservations</b></label></center>
+
+{% if display.1 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Room No.</th>
+<th>Date</th>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Manager</th>
+</tr>
+
+{% for man,other in past_res %}
+<tr>
+<td><form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+    </form>
+    <input type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td>
+    
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
+<br /><br />
+{%endif%}
+
+{% endblock %}
+
+
+
+

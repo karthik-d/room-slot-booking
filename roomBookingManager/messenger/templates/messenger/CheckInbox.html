@@ -1,0 +1,19 @@
+{% extends "messenger/base.html" %}
+
+{% block content %} 
+
+{% if messages %}
+    {% for message in messages %}
+	<script>
+		var x = confirmAction("{{message}}")
+		if(x==false){
+			document.location.href="/";
+		}
+		else{
+		document.location.href="/messages/view-messages";
+		}
+	</script>
+   {% endfor %}
+{% endif %}
+
+{% endblock %}

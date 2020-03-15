@@ -1,0 +1,27 @@
+{% extends "users/base.html" %}
+
+{% block content %} 
+
+
+<form method="POST" id="form1" action="" >
+
+{% csrf_token %}
+<center><label class="descriptor">{{prompt}}</label></center>
+<center>
+<table padding="5px" class="generalForm">
+{{form.as_table}}
+</table>
+</center>
+
+{% if extra %}
+<input type="text" name="room" value={{roomNo}} readonly="readonly" hidden="True" />
+<input type="text" name="start" value={{start}} readonly="readonly" hidden="True" />
+{% endif %}
+
+<center><input type='submit' form="form1" value="SUBMIT" class="generalForm"></center>
+</form>
+{% endblock %}
+
+
+
+

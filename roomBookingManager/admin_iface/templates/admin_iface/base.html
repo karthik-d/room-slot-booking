@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>Room Reservation Portal</title>
+{% load static %}
+{% load extra_tags %}
+<link rel="stylesheet" type="text/css" href="{% static 'messenger/style.css' %}">
+{%block head%}
+{%endblock%}
+<script>
+var ret;
+function confirmAction(details){
+	ret = confirm(details+" Do you want to continue?");
+	return ret;
+}
+</script>		
+</head>
+
+<body>
+<div class="topbar">
+<a class="left" href="/" style="margin-left:20px;">Home</a>
+
+{% if user.is_authenticated %}
+{% if request.user|has_group:"CustomerPrivilege" %}    <!Customer User!>
+<div class="dropdown left">
+<a class="dropbtn">View/Modify</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/cust/manage-reserve">Reservations</a>
+</div>
+</div>
+<div class="dropdown left">
+<a class="dropbtn">Reserve</a>
+<div class="dropdown-content"><a href=""></a>
+<a href=""></a>
+<a href="/cust/find-slot">Room-Slot</a>
+</div>
+</div>
+
+{%elif request.user|has_group:"ManagerPrivilege" %}                    <!Manager User!>
+<div class="dropdown left">
+<a class="dropbtn">Add</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/manager/add-room">Room</a>
+<a href="/manager/add-slot">Slot</a>
+</div>
+</div>
+<div class="dropdown left">
+<a class="dropbtn">View/Modify</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/manager/manage-rooms">Rooms</a>
+<a href="/manager/view-reserve">Reservations</a>
+</div>
+</div>
+
+{% else %}                                      <!Admin User!>
+<div class="dropdown left">
+<a class="dropbtn">Generate</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/custom-admin/generate-id">Employee ID</a>
+</div>
+</div>
+<div class="dropdown left">
+<a class="dropbtn">View/Delete</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/custom-admin/manage-ids">Employee</a>
+</div>
+</div>
+
+{%endif%}
+
+<a class="left" href="/messages/view-messages">Messages</a>
+
+<a href="/users/logout" class="right rounded" >Logout</a>
+<a href="/users/change-pwd" class="right rounded" >Change Password</a>
+<label class="right welcome">Welcome, {{request.user.name}}</label>
+
+{%else%}                <!Not Logged In!>
+<a href="/users/login" class="right rounded" >Login</a>
+<div class="dropdown right">
+<a class="dropbtn rounded">SignUp</a>
+<div class="dropdown-content">
+<a href=""></a>
+<a href="/users/customer-signup">As Customer</a>
+<a href="/users/manager-signup">As Manager</a>
+<a href="/users/admin-signup">As Admin</a>
+</div>
+</div>
+{%endif%}
+</div>
+
+{% block topbar %}
+{% endblock %}
+
+{% if messages %}
+    {% for message in messages %}
+    <script type="text/javascript">
+		window.alert("{{message}}");
+	</script>
+    {% endfor %}
+{% endif %}
+
+{% block content %}
+
+{% endblock %}
+</body>
+
+</html>
+

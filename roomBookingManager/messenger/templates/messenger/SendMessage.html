@@ -1,0 +1,43 @@
+{% extends "messenger/base.html" %}
+
+{% block content %} 
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h5>Conversations With {{Receiver}}</h5>
+
+<form id="f1" method="POST">
+{% csrf_token %}
+<input type="hidden" name="AfterSending" value={{RNum}} />
+</form>
+
+<table border="2px">
+
+<tr>
+<th>Received Messages</th>
+<th>Sent Messages</th>
+</tr>
+
+{% for sent,received in SenRec %}
+<tr>
+<td>{{sent}}</td>
+<td>{{received}}" "</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<input type="text" name="body"  form="f1"/>
+<input type="submit" name="Submit" value="Send" form="f1" />
+
+{% endblock %}
+
+
+
+

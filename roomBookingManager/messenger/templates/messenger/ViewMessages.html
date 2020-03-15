@@ -1,0 +1,53 @@
+{% extends "messenger/base.html" %}
+
+{% block content %} 
+
+<form id="f1" method="POST">
+{% csrf_token %}
+</form>
+
+{% if display.0 %}
+<center><label class="descriptor">Unread Messages</label></center>
+
+<center><table class="messDisp">
+
+{% for time,typ,senrecv,link in unread %}
+<tr>
+<td>{{typ}} {{senrecv}} @ {{time}}</td>
+<td style="text-align:center"><a href="/messages/open-conv/{{link}}" class="contactLink">View</a></td>
+</tr>
+{% endfor %}
+
+</table></center>
+{%else%}
+<center><label class="dispAnamoly"><b>No Unread Messages</b></label></center>
+<br /><br />
+{%endif%}
+
+{%if display.1%}
+<center><label class="descriptor">Older Messages</label></center>
+
+<center><table class="messDisp">
+
+{% for time,typ,senrecv,link in read %}
+<tr>
+<td>{{typ}} {{senrecv}} @ {{time}} </td>
+<td style="text-align:center"><a href="/messages/open-conv/{{link}}" class="contactLink">View</a></td>
+</tr>
+{% endfor %}
+
+</table></center>
+
+{%else%}
+<center><label class="dispAnamoly"><b>No Older Messages</b><label></center>
+<br /><br />
+{%endif%}
+
+<input type="text" name="search" class="searchFix" placeholder="Enter Email ID to Search" form="f1"/>
+<input type="submit" name="toSend" class="searchFix" value="SEARCH"  form="f1" />
+
+{% endblock %}
+
+
+
+

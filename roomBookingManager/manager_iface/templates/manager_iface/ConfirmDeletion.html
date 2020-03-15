@@ -1,0 +1,85 @@
+{% extends "manager_iface/base.html" %}
+
+{% block content %} 
+
+<center><label class="descriptor"><b>Room Number {{roomNo}}</b></label></center>
+
+{% if display %}
+<br /><br />
+<center><label class="dispAnamoly"><b><br /><br />The following reservations will be {{effect}}. Continue {{button}}?</b></label></center>
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Customer</th>
+<th>Date</th>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Manager</th>
+</tr>
+
+{% for cust,other in reserves %}
+<tr>
+<td><form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+    </form>
+    <input type="submit" name={{cust.1}} value={{cust.0}} class="contactLink" form="f0" />
+</td>
+    
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<br /><br />
+<center><label class="dispAnanmoly"><b><br /><br /><br />No Reservations will be {{effect}}. Continue {{button}}?</b></label></center>
+<br /><br />
+{%endif%}
+
+
+{% if button == "Delete" %}
+	{% if object == "Room" %}
+		<form id="f1" method="POST" action="/manager/delete-room" >  <!--Pseudoform!-->
+		{% csrf_token %}
+		<input type="text" hidden="True"/>
+		</form>
+		<center><input type="submit" name={{roomNo}} value={{button}} class="generalFormRed"  form="f1" />
+	{% else %}
+		<form id="f2" method="POST" action="/manager/delete-slot" >  <!--Pseudoform!-->
+		{% csrf_token %}
+		<input type="text" name="start" value={{start}} readonly="readonly" hidden="True" />
+		<input type="text" name="roomNo" value={{roomNo}} readonly="readonly" hidden="True" />
+		</form>
+		<center><input type="submit"  value={{button}} class="generalFormRed" form="f2" />
+		
+	{% endif %}
+{% else %}
+	<form id="f3" method="POST" action="/manager/modify-slot" >  <!--Pseudoform!-->
+	{% csrf_token %}
+	<input type="text" name="start" value={{start}} readonly="readonly" hidden="True" />
+	<input type="text" name="roomNo" value={{roomNo}} readonly="readonly" hidden="True" />
+	</form>
+	<center><input type="submit" value={{button}} class="generalForm" form="f3" />
+{% endif %}
+
+{% if object == "Slot" %}
+	<form id="f4" method="POST" action="/manager/manage-slots" >  <!--Pseudoform!-->
+	{% csrf_token %}
+	<input type="text" name="roomNo" value={{roomNo}} readonly="readonly" hidden="True" />
+	<input type="text" name="action" value="View Slots" readonly="readonly" hidden="True" />
+	</form>
+	<input type="submit" value="Cancel" class="generalForm"  form="f4"/>
+	</center>
+{% else %}
+	<a href="/manager/manage-rooms"><input type="button" value="Cancel" class="generalForm" /></a>
+	</center>
+{% endif %}
+
+{% endblock %}
+
+
+
+

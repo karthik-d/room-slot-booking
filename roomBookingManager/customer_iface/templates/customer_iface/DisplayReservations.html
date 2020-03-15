@@ -1,0 +1,136 @@
+{% extends "customer_iface/base.html" %}
+
+{% block content %} 
+
+<center><label class="descriptor"><b>Upcoming Reservations</b></label></center><br />
+
+{% if display.0 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Room No.</th>
+<th>Date</th>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Status</th>
+<th>Manager</th>
+<th>Action</th>
+</tr>
+
+{% for man,other,row in future %}
+
+<form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+<input type="text" hidden="True" />
+</form>
+
+<tr> 
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<td class="contactLink">
+    <input class="contactLink" type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td> 
+
+<form id={{row}} method="POST" action="delete-reserve">  <!--Pseudoform!-->
+{% csrf_token %}
+<input type="text" name="roomNo" value={{other.0}} readonly="readonly" hidden="True" />
+<input type="text" name="start" value={{other.2}} readonly="readonly" hidden="True" />
+<input type="text" name="date" value={{other.1}} readonly="readonly" hidden="True" />
+</form> 
+
+<td><input type="submit" name="action" value="Delete" class="innerSubmit" form={{row}} onclick="return confirmAction('You are attempting to delete a reservation.')" /></td>
+
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
+<br /><br />
+{%endif%}
+
+<!-- ------------------------------------------------------------------------------------------------------ !-->
+
+<center><label class="descriptor"><b>Past Reservations</b></label></center><br />
+
+{% if display.1 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Room No.</th>
+<th>Date</th>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Status</th>
+<th>Manager</th>
+</tr>
+
+{% for man,other in past %}
+<tr>
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+</form>
+    
+<td>
+<input type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td>
+
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
+<br /><br />
+{%endif%}
+
+<center><label class="descriptor"><b>Cancelled Reservations</b></label></center><br />
+
+{% if display.2 %}
+<center><table border="2px" class="tasksDisp">
+
+<tr>
+<th>Room No.</th>
+<th>Date</th>
+<th>Start Time</th>
+<th>End Time</th>
+<th>Status</th>
+<th>Manager</th>
+</tr>
+
+{% for man,other in cancel %}
+<tr>
+{% for cell in other %}
+<td>{{cell}}</td>
+{% endfor %}
+
+<form id="f0" method="POST" action="/users/profile" target="_blank">  <!--Pseudoform, open in new tab!-->
+    {% csrf_token %}
+    <input type="text" hidden="True" />
+</form>
+    
+<td>
+<input type="submit" name={{man.1}} value={{man.0}} class="hyperlink" form="f0" />
+</td>
+
+</tr>
+{% endfor %}
+</table></center>
+
+{%else%}   <!--Nothing to display!-->
+<center><label class="dispAnamoly"><b>No Reservations to display</b></label></center>
+<br /><br />
+{%endif%}
+
+{% endblock %}
+
+
+
+
