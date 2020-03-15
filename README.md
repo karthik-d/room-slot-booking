@@ -1,9 +1,10 @@
-# Room Slot Booking
-
-yaksh.fossee.in - DETAILS
-Registered Email : me.karthikd@gmail.com
+# Room Slot Booking - Django Application
+## Account Details
+### yaksh.fossee.in 
+-Registered Email : me.karthikd@gmail.com
+-Profile Name : Karthik D
 (Registered using Google Account, no username registered)
 
-courses.fossee.in - DETAILS
-Username : me_karthikd
-Email : me.karthikd@gmail.com
+### courses.fossee.in 
+-Username : me_karthikd
+-Email : me.karthikd@gmail.com
