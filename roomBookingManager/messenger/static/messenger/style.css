@@ -4,10 +4,10 @@ html{
 
 h1.mainHead{
 	color:#000000;
-	font-size:230px;
+	font-size:108px;
 	position:fixed;
-	top:-4.5%;
-	left:4.5%;
+	top:20%;
+	left:2.5%;
 	font-family: Condensed;
 	font-weight:bold;
 	letter-spacing:0.001px;
@@ -26,24 +26,13 @@ h1.mainHead span{
 
 label.subHead{
 	color:#ffffff;
-	font-size:70px;
+	font-size:50px;
 	position:fixed;
 	top:44%;
-	left:8%;
+	left:11%;
 	font-family:consolas;
 	font-weight:bold;
-	letter-spacing:38px;
-}
-
-label.subHead span{
-	color:#000000;
-	font-size:70px;
-	position:fixed;
-	top:44%;
-	left:75%;
-	font-family:consolas;
-	font-weight:bold;
-	letter-spacing:38px;
+	letter-spacing:12px;
 }
 
 body{
@@ -112,11 +101,11 @@ table.login{
 
 .dropbtn {
   float:left;
-	color: #f2f2f2;
-	  text-align: center;
-	  padding: 10px 10px 10px 10px;
-	  text-decoration: none;
-	  font-size: 20px;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 10px 10px 10px 10px;
+  text-decoration: none;
+  font-size: 20px;
   font-family:Georgia;
   overflow:visible;
 }
@@ -167,6 +156,16 @@ table.login{
 
 .right {
 	float:right;
+}
+
+.profiledrp{
+  color:#00d8d6;
+  text-align: center;
+  padding: 10px 10px 10px 10px;
+  text-decoration: none;
+  font-size: 20px;
+  font-family:Georgia;
+  overflow:visible;
 }
 
 table.timetable{
@@ -287,7 +286,7 @@ table.generalForm option {
 }
 
 table.generalForm tr td{
-	padding:4px;
+	padding:6px;
 }
 
 table.generalForm input[type=text],
@@ -363,7 +362,7 @@ table.AvlDisp tr:nth-child(odd){
 
 input[type=submit].innerSubmit{
 	background-color:inherit;
-	font-size:24px;
+	font-size:16px;
 	border-radius:10px;
 	border-color:#000000;
 	font-family:Helvetica;
@@ -496,22 +495,6 @@ a.contactLink{
 	margin-right:30px;
 	margin-top:10px;
 	text-decoration:none;
-}
-
-input[type=submit].contactLink{
-	font-size: 20px;
-	border-style:dashed;
-	border-radius:30px;
-	border-color:#b33939;
-	padding:4px;
-	margin-right:30px;
-	margin-top:10px;
-	text-decoration:none;
-}
-
-td.contactLink{
-	text-align:center;
-	vertical-align:middle;
 }
 
 table.messDisp{

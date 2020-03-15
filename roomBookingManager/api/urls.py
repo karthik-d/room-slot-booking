@@ -1,8 +1,11 @@
+"""Module to route URLs related to the views for the API part of the Application"""
+
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserHandler, UserDetail, CustomerHandler, ManagerHandler, AdminHandler, RoomHandler, SlotHandler, RoomDetail, SlotDetail, ManagerDetail, CustomerDetail, AdminDetail, AllReservations, PastReservations, FutureReservations, OngoingReservations, CancelledReservations, InactiveReservationDetail, ActiveReservationManage
+from .views import UserHandler, UserDetail, CustomerHandler, ManagerHandler, AdminHandler, RoomHandler, SlotHandler, RoomDetail, SlotDetail, ManagerDetail, CustomerDetail, AdminDetail, AllReservations, PastReservations, FutureReservations, OngoingReservations, CancelledReservations, InactiveReservationDetail, ActiveReservationManage, EmpidHandler, EmpidDetail, GenerateAuthToken
 
 urlpatterns = [
+	path('get-token/', GenerateAuthToken.as_view(), name="GenerateToken"),
 	path('user-handler/', UserHandler.as_view(), name='user-handler'),
 	path('user-detail/<int:id>/', UserDetail.as_view(), name='user-detail'),	
     path('cust-handler/', CustomerHandler.as_view(), name='customer-handler'),
@@ -11,6 +14,8 @@ urlpatterns = [
     path('manager-detail/<int:id>/', ManagerDetail.as_view(), name='manager-detail'),
     path('admin-handler/', AdminHandler.as_view(), name='admin-handler'),
     path('admin-detail/<int:id>/', AdminDetail.as_view(), name='admin-detail'),
+    path('empid-handler/', EmpidHandler.as_view(), name='empid-handler'),
+    path('empid-detail/<str:emp_id>/', EmpidDetail.as_view(), name='empid-detail'),
     path('room-handler/', RoomHandler.as_view(), name='room-handler'),
     path('slot-handler/', SlotHandler.as_view(), name='slot-handler'),
     path('room-detail/<str:room_no>/', RoomDetail.as_view(), name='room-detail'),

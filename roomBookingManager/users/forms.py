@@ -87,7 +87,7 @@ class ManagerRegisterForm(forms.Form):
 			raise ValueError("Mobile Number must be 10 digits")
 		for k in data:
 			if not k.isdigit():
-				raise ValueError("Only Numbers Allowed")
+				raise ValueError("Only Numbers Allowed in phone number")
 			return data        
     
 	def clean_email(self):
@@ -102,7 +102,7 @@ class ManagerRegisterForm(forms.Form):
 	def clean_gender(self):			  
 		data = self.cleaned_data['gender']
 		if(data not in ['M','F']):                    # Happens if HTML input form is overriden
-			raise ValueError("Gender must be M/F")
+			raise ValueError("Gender must be Male/Female")
 		return data
     		
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'customer_iface.apps.CustomerIfaceConfig',
     'manager_iface.apps.ManagerIfaceConfig',
     'admin_iface.apps.AdminIfaceConfig',

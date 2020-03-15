@@ -19,5 +19,6 @@ class SlotFindForm(forms.Form):
 		data = self.cleaned_data['date']
 		if(data<datetime.date(datetime.now())):
 			raise ValueError("Date Must Be In Future")
+		return data	
 		
 	

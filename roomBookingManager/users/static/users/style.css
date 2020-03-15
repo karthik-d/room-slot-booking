@@ -4,10 +4,10 @@ html{
 
 h1.mainHead{
 	color:#000000;
-	font-size:230px;
+	font-size:108px;
 	position:fixed;
-	top:-4.5%;
-	left:4.5%;
+	top:20%;
+	left:2.5%;
 	font-family: Condensed;
 	font-weight:bold;
 	letter-spacing:0.001px;
@@ -26,24 +26,13 @@ h1.mainHead span{
 
 label.subHead{
 	color:#ffffff;
-	font-size:70px;
+	font-size:50px;
 	position:fixed;
 	top:44%;
-	left:8%;
+	left:11%;
 	font-family:consolas;
 	font-weight:bold;
-	letter-spacing:38px;
-}
-
-label.subHead span{
-	color:#000000;
-	font-size:70px;
-	position:fixed;
-	top:44%;
-	left:75%;
-	font-family:consolas;
-	font-weight:bold;
-	letter-spacing:38px;
+	letter-spacing:12px;
 }
 
 body{

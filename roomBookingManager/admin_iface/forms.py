@@ -1,3 +1,6 @@
+""" Module to implement forms for user input pertaining to Admin Inteface app of the website
+"""
+
 from django import forms    
 from users.constants import EMPLOYEE_PREFIXES
 

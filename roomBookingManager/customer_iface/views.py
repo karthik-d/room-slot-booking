@@ -50,7 +50,7 @@ class FindSlot(View):
 				avl_slots = list()
 				for i in slots:
 					if(i not in res_slots):
-						# Ensure Advance Reservation Period
+						'''Ensure Advance Reservation Period'''
 						if(today+timedelta(days=i.room.advance_period)>=date):
 							avl_slots.append(i)
 						    

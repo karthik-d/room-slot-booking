@@ -81,7 +81,7 @@
 {% csrf_token %}
 <input type="text" name="empId" value={{other.0}} readonly="readonly" hidden="True" />
 </form> 
-<td><input type="submit" name="action" value="Delete" class="innerSubmit" form={{form}} onclick="return confirmAction('You are attempting to delete an employee.')"/></td>
+<td><input type="submit" name="action" value="Unassign" class="innerSubmit" form={{form}} onclick="return confirmAction('You are attempting to delete an employee.')"/></td>
 
 </tr>
 {% endfor %}
