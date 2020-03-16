@@ -62,8 +62,6 @@ class UserHandler(APIView):    # For a list of users
 	""" Class based API View to handle listing of users
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	serializer_class = UserSerializer
 	queryset = User.objects.all()
     
@@ -80,8 +78,6 @@ class UserDetail(generics.RetrieveAPIView):     # Read-Only for an individual us
 	details thrugh GET and DELETE requests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	queryset = User.objects.all()
 	serializer_class = UserSerializer    
 	lookup_field = 'id'  
@@ -101,8 +97,6 @@ class CustomerHandler(APIView):    # For a list of users
 	through GET and POST reqquests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	serializer_class = CustomerSerializer
 	queryset = Customer.objects.all()
 	
@@ -140,8 +134,6 @@ class CustomerDetail(generics.RetrieveDestroyAPIView):     # Read-Only for an in
 	details thrugh GET and DELETE requests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	queryset = Customer.objects.all()
 	serializer_class = CustomerSerializer  
 	custom_lookup_field = 'id' 
@@ -170,8 +162,6 @@ class ManagerHandler(APIView):    # For a list of users
 	through GET and POST requests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	serializer_class = ManagerSerializer
 	queryset = Manager.objects.all()
 	
@@ -234,8 +224,7 @@ class ManagerDetail(generics.RetrieveDestroyAPIView):     # Read-Only for an ind
 	""" Class based API View to display and delete specific Manager user
 	details through GET and DELETE requests
 	"""
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
+	
 	queryset = Manager.objects.all()
 	serializer_class = ManagerSerializer  
 	custom_lookup_field = 'id'
@@ -264,8 +253,6 @@ class AdminHandler(APIView):    # For a list of users
 	through GET and POST reqquests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	serializer_class = AdminSerializer
 	queryset = Admin.objects.all()
     
@@ -329,8 +316,6 @@ class AdminDetail(generics.RetrieveDestroyAPIView):     # Read-Only for an indiv
 	details thrugh GET and DELETE requests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	queryset = Admin.objects.all()
 	serializer_class = AdminSerializer  
 	custom_lookup_field = 'id'
@@ -359,8 +344,6 @@ class EmpidHandler(APIView):    # For a list of users
 	through GET and POST reqquests
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	serializer_class = EmployeeIDSerializer
 	queryset = EmployeeID.objects.all()
 			
@@ -392,8 +375,6 @@ class EmpidDetail(generics.RetrieveDestroyAPIView):     # Read-Only for an indiv
 	the concerned employee User and his rooms but retains ID instance for reuse
 	"""
 	
-	authentication_classes = [TokenAuthentication]
-	permission_classes = [IsAuthenticated]
 	queryset = EmployeeID.objects.all()
 	serializer_class = EmployeeIDSerializer  
 	lookup_field = 'emp_id'
@@ -560,7 +541,7 @@ class CancelledReservations(APIView):    # For a list of users
 		
 class InactiveReservationDetail(generics.RetrieveAPIView):     # Read-Only for an individual user
 	""" Class based API View to display individual Reservation
-	trhough GET requests
+	trhough GET requests, either in Past or Cancelled
 	"""
 	
 	authentication_classes = [TokenAuthentication]

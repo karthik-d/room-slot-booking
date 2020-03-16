@@ -1,3 +1,5 @@
+""" Signals associated with the User-Domain of the Application to populate the database initially"""
+
 from django.contrib.auth.models import Group,Permission
 from django.contrib.contenttypes.models import ContentType
 from users.models import User, Admin, EmployeeID

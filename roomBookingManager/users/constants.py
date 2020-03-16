@@ -1,4 +1,4 @@
-""" Module to store CONSTANT values primarily concerned with the users domail of the website
+""" Module to store CONSTANT values primarily concerned with the users domain of the website
 """
 
 # Contains the employee types as keys and their corresponding code_forms as values
