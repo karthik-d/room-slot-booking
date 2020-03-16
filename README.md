@@ -148,13 +148,320 @@ As per the task requirements
 - Customer is shown only those rooms for booking, which are within the reservation period. This period (as mentioned before) is defined by the manager during room creation
 - A customer can view all types of reervations of his own - past, future, cancelled. He can further view the relevant manager's profile details
 
-
 ### Test Cases
 Test cases testing the functioning and integrity of models, forms, signals and views have been included for all applications of the website in their respective "tests.py" file
 
 ### API Endpoints
 Token authenticated API endpoints have been designed for the website, detailed ahead in the documentation
 Accessible only by an admin user after token generation
+
+
+## API Endpoints - Details
+
+**NOTE THAT TOKEN AUTHENTICATION IS REMOVED FOR USER MANAGEMENT TO ENABLE EASY SIMULATION OF GET, POST and DELETE methods
+and the Authentication can be added before deployment with just a single line of code***
+
+- The authentication is enabled for all API endpoints except Token Generation, User, Customer, Manager and Admin Management
+- The API interface for this webiste is isolated from the rest of the HTTP HTML request rendering, being kept in a separate application called "api"
+- Only an Admin User can access the API through URLs
+- Authentication is performed using Admin specific tokens
+- **All requests (except token generation and user management) need a Authentication Token header to send requests**
+- The GET, POST, DELETE requests can be made using any browser if it allows adding URL Authentication Header
+- The suggested method is using 'curl' from the terminal for authenticated views. Other third-party GUI softwares are available to send tailored HHTP requests as well
+- For non-authenticated APIs i.e USER MANAGEMENT, browser can be directly used.
+- DRF Provides an interface to directly supply POST data. Authentication is not included for POST request for **ease of simulation** of POST requests. They can be added with just a single-line before deployment 
+- Python based scripts using 'requests' module can also be used to send requests and get back data
+- The mentioned methods use curl
+
+**NOTE THAT ALL URLs HERE ARE ONLY ONLY RELATIVE. THE HOST and DOMAIN depend on THE ADDRESS PROVIDED BY THE SERVER WHEN RUN**
+- Eg. For a relative URL "/api/get-token/", 
+- If my server runs on http://127.0.0.1:8000/
+- The absolute URL will be http://127.0.0.1:8000/api/get-token/ 
+- Hence, send requests to the absoilute URLs after combining
+
+Below are the APIs and their relative URLs
+### Generating Token for Admins (NO AUTHENTICATION)
+- This is the only request that can be made without a Token based autentication
+```
+api/get-token
+```
+- A GET request to this URL, specifies the format for POST request to get a Authentication Token for the admin user
+- POST request should be sent in that format to the same URL
+- The JSON format for POST is
+```
+{"email":"admin@gmail.com", "password":"secret"}
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to type in POST JSON data and send a request 
+
+### User Details (NO AUTHENTICATION)
+ ### Relative URLs
+ - URL 1: For Listing All Users (GET) 
+ ```
+ /api/user-handler/
+ ```
+ - URL 2: For Viewing Specific User (GET) and deleting a user (DELETE)
+ -        The id for user can be found in the JSON data returned by the Listing URL
+ -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ ```
+/api/user-detail/<int:id>/
+ ``` 
+ 
+ #### GET Request Examples
+ 
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X GET http://127.0.0.1:8000/api/user-handler/
+ curl -X GET http://127.0.0.1:8000/api/user-detail/2/
+ ```
+ 
+#### DELETE Request Example
+
+- Used to DELETE a Room
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X DELETE http://127.0.0.1:8000/api/user-detail/2/
+```
+
+
+### Customer Details (NO AUTHENTICATION)
+ ### Relative URLs
+ - URL 1: For Listing All (GET) Customer and Creating Customer (POST)
+ ```
+ /api/cust-handler/
+ ```
+ - URL 2: For Viewing Specific Customer(GET) and Deleting a Customer (DELETE)
+ -        The id for customer can be found in the JSON data returned by the Listing URL
+ -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ ```
+ /api/cust-detail/id/
+ ``` 
+ 
+ #### GET Request Examples
+ 
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X GET http://127.0.0.1:8000/api/cust-handler/
+ curl -X GET http://127.0.0.1:8000/api/cust-detail/2/
+ ```
+ #### POST Request Example
+ 
+ - Used to CREATE a Customer
+ - JSON Data required - email, name, password, gender, phone
+ - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
+ - The DRF provides an interface to directly supply RAW JSON data
+ - A sample JSON and URL are provided below 
+ ```
+{"email":"abc@example.com","name":"ABC", "password":"secret", "gender":"M", "phone":"9980006526"}'
+http://127.0.0.1:8000/api/cust-handler/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to type in POST JSON data and send a request 
+
+#### DELETE Request Example
+
+- Used to DELETE a Customer
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X DELETE http://127.0.0.1:8000/api/cust-detail/2/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
+
+
+### Manager Details (NO AUTHENTICATION)
+ ### Relative URLs
+ - URL 1: For Listing All (GET) Manager and Creating Manager (POST)
+ ```
+ /api/manager-handler/
+ ```
+ - URL 2: For Viewing Specific Customer(GET) and Deleting a Customer (DELETE)
+ -        The id for manager can be found in the JSON data returned by the Listing URL
+ -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ ```
+ /api/manager-detail/id/
+ ``` 
+ 
+ #### GET Request Examples
+ 
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X GET http://127.0.0.1:8000/api/manager-handler/
+ curl -X GET http://127.0.0.1:8000/api/manager-detail/2/
+ ```
+ #### POST Request Example
+ 
+ - Used to CREATE a manager
+ - JSON Data required - email, name, password, gender, phone, emp_id (a valid employee ID already generated by an admin)
+ - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
+ - The DRF provides an interface to directly supply RAW JSON data
+ - A sample JSON and URL are provided below 
+ ```
+{"email":"abc@example.com","name":"ABC", "password":"secret", "emp_id":"MAN002", "gender":"M", "phone":"9980006526"}'
+http://127.0.0.1:8000/api/manager-handler/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to type in POST JSON data and send a request 
+
+#### DELETE Request Example
+
+- Used to DELETE a Customer
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X DELETE http://127.0.0.1:8000/api/manager-detail/2/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
+
+
+### Admin Details (NO AUTHENTICATION)
+ ### Relative URLs
+ - URL 1: For Listing All (GET) Admins and Creating Admins (POST)
+ ```
+ /api/admin-handler/
+ ```
+ - URL 2: For Viewing Specific Admins(GET) and Deleting a Admin (DELETE)
+ -        The id for admin can be found in the JSON data returned by the Listing URL
+ -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ ```
+ /api/admin-detail/id/
+ ``` 
+ 
+ #### GET Request Examples
+ 
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X GET http://127.0.0.1:8000/api/admin-handler/
+ curl -X GET http://127.0.0.1:8000/api/admin-detail/2/
+ ```
+ #### POST Request Example
+ 
+ - Used to CREATE a manager
+ - JSON Data required - email, name, password, gender, phone, emp_id (a valid employee ID already generated by an admin)
+ - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
+ - The DRF provides an interface to directly supply RAW JSON data
+ - A sample JSON and URL are provided below 
+ ```
+{"email":"abc@example.com","name":"ABC", "password":"secret", "emp_id":"ADM002", "gender":"M", "phone":"9980006526"}'
+http://127.0.0.1:8000/api/admin-handler/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to type in POST JSON data and send a request 
+
+#### DELETE Request Example
+
+- Used to DELETE a Customer
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X DELETE http://127.0.0.1:8000/api/admin-detail/2/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
+
+
+### Employee ID Details (NO AUTHENTICATION)
+ ### Relative URLs
+ - URL 1: For Listing All (GET) IDs and Creating IDs (POST)
+ ```
+ /api/empid-handler/
+ ```
+ - URL 2: For Viewing Specific ID (GET) and unassigning ID and Deleting corresponding employee (DELETE)
+ -        The emp_id can be found in the JSON data returned by the Listing URL
+ -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ ```
+/api/empid-detail/<str:emp_id>/
+ ``` 
+ 
+ #### GET Request Examples
+ 
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X GET http://127.0.0.1:8000/api/empid-handler/
+ curl -X GET http://127.0.0.1:8000/api/empid-detail/MAN002/
+ ```
+ #### POST Request Example
+ 
+ - Used to CREATE a manager
+ - JSON Data required - emp_type (the type of employee for whom to generate ID - valid values are 'manager', 'admin'
+ Refer users/constants.py - The EMPLOYEE_PREFIXES dictionary's keys are the available employee types)
+ - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
+ - The DRF provides an interface to directly supply RAW JSON data
+ - A sample JSON and URL are provided below 
+ ```
+{"emp_type":"admin"}'
+http://127.0.0.1:8000/api/empid-handler/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to type in POST JSON data and send a request 
+
+#### DELETE Request Example
+
+- Used to DELETE a Employee ID
+ - The following curl command can be used (OR) URL can be used in a browser directly
+ ```
+ curl -X DELETE http://127.0.0.1:8000/api/empid-detail/MAN002/
+```
+- This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
+
+
+### Room Details (AUTHENTICATION REQUIRED)
+ ### Relative URLs
+ - URL 1: For Listing All Rooms (GET) 
+ ```
+ /api/room-handler/
+ ```
+ - URL 2: For Viewing Specific Room (GET) and deleting a Room (DELETE)
+ -        The room_no for can be found in the JSON data returned by the Listing URL
+ -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ ```
+/api/room-detail/<str:room_no>/
+ ``` 
+ 
+ #### GET Request Examples
+ 
+ - The following curl command can be used 
+ ```
+ curl -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -X GET http://127.0.0.1:8000/api/room-handler/
+ curl -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -X GET http://127.0.0.1:8000/api/room-detail/B105/
+ ```
+ 
+#### DELETE Request Example
+
+- Used to DELETE a Room
+ - The following curl command can be used 
+ ```
+ curl -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -X DELETE http://127.0.0.1:8000/api/room-detail/B105/
+```
+
+### Other API Endpoints
+The other API endpoints are alll authenticated and are similar to type Room Detail API:
+- Past Reservations - GET (List and Specific)
+- Present Reservations - GET (List and Specific)
+- Ongoing Reservations - GET (List and Specific)
+- Future Reservations - GET (List and Specific), DELETE
+
+### URLs Summary
+The following is the list of URL Patterns which has to be prefixed with **/api/**
+ 
+
+   - get-token/', GenerateAuthToken
+   - user-handler/', UserHandler.
+	  - user-detail/<int:id>/', UserDetail	
+   - cust-handler/', CustomerHandler
+   - cust-detail/<int:id>/', CustomerDetail
+   - manager-handler/', ManagerHandler
+   - manager-detail/<int:id>/', ManagerDetail
+   - admin-handler/', AdminHandler.as_view()
+   - admin-detail/<int:id>/', AdminDetail
+   - empid-handler/', EmpidHandler
+   - empid-detail/<str:emp_id>/'
+   - room-handler/', RoomHandler
+   - slot-handler/', SlotHandler
+   - room-detail/<str:room_no>/', RoomDetail
+   - slot-detail/<int:id>/', SlotDetail
+   - all-reserves/', AllReservations
+   - past-reserves/', PastReservations
+   - future-reserves/', FutureReservations
+   - occupied-reserves/', OngoingReservations.
+   - cancelled-reserves/', CancelledReservations
+   - reserve-detail/<int:id>/', InactiveReservationDetail
+   - reserve-manage/<int:id>/', ActiveReservationManage   
+    
+     
+   Complete implementation details can be found in the "api" folder of the project
+
 
 
 ## Key Features
