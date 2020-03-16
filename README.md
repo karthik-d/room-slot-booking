@@ -156,6 +156,40 @@ Token authenticated API endpoints have been designed for the website, detailed a
 Accessible only by an admin user after token generation
 
 
+## Additional Features
+### Practical User Hierarchy
+- Allow logins based on Email ID
+- As mentioned above, the hierarchy of users is an easily extensible implementation enabling easy addition of employee types
+- Separate maintenance of Employee IDs
+- Need for generation of ID by admin to ensure only verified persons can signup as Manager or Admin
+### Site Local MESSAGING Service
+- Allows Customer to contact relevant managers through site, using their mail ID
+- Managers and Admins can also easily notify users about changes, updates, etc through messages
+- Display of number of unread messages during login
+### RESTful API Endpoints
+- API endpoints for accessing and deleting records in all databases
+- Addtionally, can handle user creation - all three types
+- Authentication using tokens, allowing only admins to access and modify complete site data
+- (NOTE: Authentication is removed for User Management, Employee ID APIs for ease of simulation of POST requests, these can be added during actual deployment by simply mentioning the authentication class in Views)
+### Email Based Notifications
+- Email notification to admin during employee ID generation
+- Email notification to customers about changes or deltions in bookings
+### Isolated Reservation Database
+- An additional database to store reservation data in simple data format
+- Not linked to any other database through foreign-keys, etc. 
+- Used to permanently store user reservation history
+- Destroyed only when the customer is deleted
+### View Profile Feature
+- Users can view relevant user profiles
+- This enables access to contact information like phone number, email ID apart from messaging service
+- User Hierarchy is respected here
+- Admin can view all
+- Manager can view all
+- Customer can view only Managers and only respond (not initiate) conversations with an admin
+### Change Password Feature
+- Users are allowed to chane their user account password 
+
+
 ## API Endpoints - Details
 
 **NOTE THAT TOKEN AUTHENTICATION IS REMOVED FOR USER MANAGEMENT TO ENABLE EASY SIMULATION OF GET, POST and DELETE methods
@@ -195,13 +229,13 @@ api/get-token
 
 ### User Details (NO AUTHENTICATION)
  ### Relative URLs
- - URL 1: For Listing All Users (GET) 
+ - **URL 1**: For Listing All Users (GET) 
  ```
  /api/user-handler/
  ```
- - URL 2: For Viewing Specific User (GET) and deleting a user (DELETE)
- -        The id for user can be found in the JSON data returned by the Listing URL
- -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ - **URL 2**: For Viewing Specific User (GET) and deleting a user (DELETE)
+ - The id for user can be found in the JSON data returned by the Listing URL
+ - The URL to specific user can be found in the JSON data returned by the Listing URL
  ```
 /api/user-detail/<int:id>/
  ``` 
@@ -225,13 +259,13 @@ api/get-token
 
 ### Customer Details (NO AUTHENTICATION)
  ### Relative URLs
- - URL 1: For Listing All (GET) Customer and Creating Customer (POST)
+ - **URL 1**: For Listing All (GET) Customer and Creating Customer (POST)
  ```
  /api/cust-handler/
  ```
- - URL 2: For Viewing Specific Customer(GET) and Deleting a Customer (DELETE)
- -        The id for customer can be found in the JSON data returned by the Listing URL
- -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ - **URL 2**: For Viewing Specific Customer(GET) and Deleting a Customer (DELETE)
+ - The id for customer can be found in the JSON data returned by the Listing URL
+ - The URL to specific user can be found in the JSON data returned by the Listing URL
  ```
  /api/cust-detail/id/
  ``` 
@@ -268,13 +302,13 @@ http://127.0.0.1:8000/api/cust-handler/
 
 ### Manager Details (NO AUTHENTICATION)
  ### Relative URLs
- - URL 1: For Listing All (GET) Manager and Creating Manager (POST)
+ - **URL 1**: For Listing All (GET) Manager and Creating Manager (POST)
  ```
  /api/manager-handler/
  ```
- - URL 2: For Viewing Specific Customer(GET) and Deleting a Customer (DELETE)
- -        The id for manager can be found in the JSON data returned by the Listing URL
- -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ - **URL 2**: For Viewing Specific Manager(GET) and Deleting a Manager (DELETE)
+ - The id for manager can be found in the JSON data returned by the Listing URL
+ - The URL to specific user can be found in the JSON data returned by the Listing URL
  ```
  /api/manager-detail/id/
  ``` 
@@ -301,7 +335,7 @@ http://127.0.0.1:8000/api/manager-handler/
 
 #### DELETE Request Example
 
-- Used to DELETE a Customer
+- Used to DELETE a Manager
  - The following curl command can be used (OR) URL can be used in a browser directly
  ```
  curl -X DELETE http://127.0.0.1:8000/api/manager-detail/2/
@@ -311,13 +345,13 @@ http://127.0.0.1:8000/api/manager-handler/
 
 ### Admin Details (NO AUTHENTICATION)
  ### Relative URLs
- - URL 1: For Listing All (GET) Admins and Creating Admins (POST)
+ - **URL 1**: For Listing All (GET) Admins and Creating Admins (POST)
  ```
  /api/admin-handler/
  ```
- - URL 2: For Viewing Specific Admins(GET) and Deleting a Admin (DELETE)
- -        The id for admin can be found in the JSON data returned by the Listing URL
- -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ - **URL 2**: For Viewing Specific Admins(GET) and Deleting a Admin (DELETE)
+ - The id for admin can be found in the JSON data returned by the Listing URL
+ - The URL to specific user can be found in the JSON data returned by the Listing URL
  ```
  /api/admin-detail/id/
  ``` 
@@ -331,7 +365,7 @@ http://127.0.0.1:8000/api/manager-handler/
  ```
  #### POST Request Example
  
- - Used to CREATE a manager
+ - Used to CREATE an Admin
  - JSON Data required - email, name, password, gender, phone, emp_id (a valid employee ID already generated by an admin)
  - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
  - The DRF provides an interface to directly supply RAW JSON data
@@ -344,7 +378,7 @@ http://127.0.0.1:8000/api/admin-handler/
 
 #### DELETE Request Example
 
-- Used to DELETE a Customer
+- Used to DELETE an Admin
  - The following curl command can be used (OR) URL can be used in a browser directly
  ```
  curl -X DELETE http://127.0.0.1:8000/api/admin-detail/2/
@@ -354,13 +388,13 @@ http://127.0.0.1:8000/api/admin-handler/
 
 ### Employee ID Details (NO AUTHENTICATION)
  ### Relative URLs
- - URL 1: For Listing All (GET) IDs and Creating IDs (POST)
+ - **URL 1**: For Listing All (GET) IDs and Creating IDs (POST)
  ```
  /api/empid-handler/
  ```
- - URL 2: For Viewing Specific ID (GET) and unassigning ID and Deleting corresponding employee (DELETE)
- -        The emp_id can be found in the JSON data returned by the Listing URL
- -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ - **URL 2**: For Viewing Specific ID (GET) and unassigning ID and Deleting corresponding employee (DELETE)
+ - The emp_id can be found in the JSON data returned by the Listing URL
+ - The URL to specific user can be found in the JSON data returned by the Listing URL
  ```
 /api/empid-detail/<str:emp_id>/
  ``` 
@@ -374,7 +408,7 @@ http://127.0.0.1:8000/api/admin-handler/
  ```
  #### POST Request Example
  
- - Used to CREATE a manager
+ - Used to CREATE an Employee iD
  - JSON Data required - emp_type (the type of employee for whom to generate ID - valid values are 'manager', 'admin'
  Refer users/constants.py - The EMPLOYEE_PREFIXES dictionary's keys are the available employee types)
  - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
@@ -398,13 +432,13 @@ http://127.0.0.1:8000/api/empid-handler/
 
 ### Room Details (AUTHENTICATION REQUIRED)
  ### Relative URLs
- - URL 1: For Listing All Rooms (GET) 
+ - **URL 1**: For Listing All Rooms (GET) 
  ```
  /api/room-handler/
  ```
- - URL 2: For Viewing Specific Room (GET) and deleting a Room (DELETE)
- -        The room_no for can be found in the JSON data returned by the Listing URL
- -        The URL to specific user can be found in the JSON data returned by the Listing URL
+ - **URL 2**: For Viewing Specific Room (GET) and deleting a Room (DELETE)
+ - The room_no for can be found in the JSON data returned by the Listing URL
+ - The URL to specific user can be found in the JSON data returned by the Listing URL
  ```
 /api/room-detail/<str:room_no>/
  ``` 
@@ -420,7 +454,7 @@ http://127.0.0.1:8000/api/empid-handler/
 #### DELETE Request Example
 
 - Used to DELETE a Room
- - The following curl command can be used 
+- The following curl command can be used 
  ```
  curl -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' -X DELETE http://127.0.0.1:8000/api/room-detail/B105/
 ```
@@ -438,7 +472,7 @@ The following is the list of URL Patterns which has to be prefixed with **/api/*
 
    - get-token/', GenerateAuthToken
    - user-handler/', UserHandler.
-	  - user-detail/<int:id>/', UserDetail	
+   - user-detail/<int:id>/', UserDetail	
    - cust-handler/', CustomerHandler
    - cust-detail/<int:id>/', CustomerDetail
    - manager-handler/', ManagerHandler
@@ -464,11 +498,12 @@ The following is the list of URL Patterns which has to be prefixed with **/api/*
 
 
 
-## Key Features
+## Regulations
 
-- Followed PEP8 Recommendations
+- Followed PEP8 Recommendations (as prescribed in task)
 
 ## Improvisations and Atomic Features Used
+- Built multi-layer warpped decorators to accept additional arguments
 - Created custom decorators for permissions management
 - Used signals to initially populate database 
 - Used signals to auto-update isolated data models
@@ -476,3 +511,4 @@ The following is the list of URL Patterns which has to be prefixed with **/api/*
 - Custom defined user model to enable email based login
 - Redefined User Manager class to handle custome user model
 - Created user groups to streamline and control user access
+- Used SMTP protocol for emailing notifications to customers
