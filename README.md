@@ -192,7 +192,7 @@ Accessible only by an admin user after token generation
 
 ## API Endpoints - Details
 
-**NOTE THAT TOKEN AUTHENTICATION IS REMOVED FOR USER MANAGEMENT TO ENABLE EASY SIMULATION OF GET, POST and DELETE methods
+**NOTE that Token Authenticatio is removed for user management to enable EASY SIMULATION Of GET, POST and DELETE methods
 and the Authentication can be added before deployment with just a single line of code***
 
 - The authentication is enabled for all API endpoints except Token Generation, User, Customer, Manager and Admin Management
@@ -207,7 +207,7 @@ and the Authentication can be added before deployment with just a single line of
 - Python based scripts using 'requests' module can also be used to send requests and get back data
 - The mentioned methods use curl
 
-**NOTE THAT ALL URLs HERE ARE ONLY ONLY RELATIVE. THE HOST and DOMAIN depend on THE ADDRESS PROVIDED BY THE SERVER WHEN RUN**
+**NOTE THAT ALL URLs HERE ARE ONLY ONLY RELATIVE. THE HOST and DOMAIN depend on the Address on which the test-server runs**
 - Eg. For a relative URL "/api/get-token/", 
 - If my server runs on http://127.0.0.1:8000/
 - The absolute URL will be http://127.0.0.1:8000/api/get-token/ 
