@@ -496,14 +496,8 @@ The following is the list of URL Patterns which has to be prefixed with **/api/*
      
    Complete implementation details can be found in the "api" folder of the project
 
-
-
-## Regulations
-
-- Followed PEP8 Recommendations (as prescribed in task)
-
 ## Improvisations and Atomic Features Used
-- Built multi-layer warpped decorators to accept additional arguments
+- Built multi-layer wrapped decorators to accept additional arguments
 - Created custom decorators for permissions management
 - Used signals to initially populate database 
 - Used signals to auto-update isolated data models
@@ -512,3 +506,9 @@ The following is the list of URL Patterns which has to be prefixed with **/api/*
 - Redefined User Manager class to handle custome user model
 - Created user groups to streamline and control user access
 - Used SMTP protocol for emailing notifications to customers
+
+
+## Regulations
+
+- Followed PEP8 Recommendations (as prescribed in task)
+
