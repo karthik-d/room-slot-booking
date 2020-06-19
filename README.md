@@ -1,4 +1,4 @@
-# Room Slot Booking - Django Application
+# Room Slot Booking with Intra-Website Messaging Service - Django Application
 
 ## Procedure to Execute
 
