@@ -60,6 +60,7 @@
  ``` 
   (virtual) $ deactivate
   ```
+  
 ## Features  
 
 ### User Authentication
@@ -177,8 +178,7 @@ Accessible only by an admin user after token generation
 - Manager can view all
 - Customer can view only Managers and only respond (not initiate) conversations with an admin
 ### Change Password Feature
-- Users are allowed to chane their user account password 
-
+- Users are allowed to chane their user account password   
 
 ## API Endpoints - Details
 
