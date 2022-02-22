@@ -1,5 +1,11 @@
 # Room Slot Booking with Intra-Website Messaging Service - Django Application
 
+Django based web-application to book time/room slots for events.    
+Three user interface types:
+- Owner: To create and manage rooms
+- Manager: To manage rooms/slots and bookings
+- Customer: To make roomt/slot bookings
+
 ## Procedure to Execute
 
 ### Getting the project
