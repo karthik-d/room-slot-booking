@@ -64,7 +64,7 @@ Three user interface types:
   (virtual) $ sudo ../virtual/bin/python3 manage.py test 
   ```
 ### Closing the environment
-- To exit the virtual environmnet, from any directory
+- To exit the virtual environmnent, from any directory
  ``` 
   (virtual) $ deactivate
   ```
@@ -84,7 +84,7 @@ There are three User Grops deisgned in this application to handle user permissio
 - AdminPrivilege
 - ManagerPrivilege
 - CustomerPrivilege
-The detailed explanation is mentioned in the user-types below
+The detailed explanation is mentioned in the user-types below.
 
 #### User Types
 There are 3 types of users presently with an easily extensible model to accomodate more types of employees
