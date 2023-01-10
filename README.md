@@ -1,6 +1,6 @@
 # Room Slot Booking with Intra-Website Messaging Service - Django Application
 
-Deployed at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - scheduling and manage match slots and visitor facilities.  
+Deployed at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - scheduling and manage match slots and visitor facilities..
 
 Django based web-application to book time/room slots for events.    
 Three user interface types:
