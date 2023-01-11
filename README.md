@@ -4,9 +4,9 @@ Deployed at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a stat
 
 Django based web-application to book time/room slots for events.    
 Three user interface types:
-- Owner: To create and manage rooms/slots
-- Manager: To manage rooms/slots and bookings
-- Customer: To make room/slot bookings
+- Owner: To create and manage rooms/slots. 
+- Manager: To manage rooms/slots and bookings. 
+- Customer: To make room/slot bookings. 
 
 ## Procedure to Execute
 
