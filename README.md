@@ -1,14 +1,16 @@
-# Room Slot Booking with Intra-Website Messaging Service - Django Application
+# Slot Booking with Intra-Website Messaging Service: A Django Application
 
-Deployed at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - scheduling and manage match slots and visitor facilities.
+> Deployed as a web service at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - to schedule and **manage game slots and visitor facilities** on a **resource-constrained campus**.
 
-A Django based web-application to book time/room slots for events.    
-Three user interface types:
-- Owner: To create and manage rooms/slots. 
-- Manager: To manage rooms/slots and bookings. 
-- Customer: To make room/slot bookings. 
+A Django based web-application to **manage time/room slots** for events centrally, with hiearchical user permissions.    
+It features three user-ends (interfaces and permission-levels):
+- **Owner**: To create and manage rooms/slots. Admin access, with managerial rights. 
+- **Manager**: To manage rooms/slots and bookings. 
+- **Customer**: To request room/slot bookings. 
 
 ## Key Features
+
+> Each feature is **independently pluggable** into any Django project, with minimal adaptations. For instance, the **intra-website messaging service** can be plugged into any Django project that conceptualizes user management.
 
 ### Practical User Hierarchy
 - Allow logins based on Email ID
@@ -61,6 +63,8 @@ Three user interface types:
 
 
 ## Run your own instance!
+
+**Get the whole project and build atop, or simply plug in the features you need.**
 
 ### Getting the project
 - The repository can be cloned to another GitHub account or Donwloaded
@@ -139,20 +143,21 @@ There are three User Grops deisgned in this application to handle user permissio
 The detailed explanation is mentioned in the user-types below.
 
 #### User Types
-There are 3 types of users presently with an easily extensible model to accomodate more types of employees
+There are 3 types of users presently with an easily extensible model to retro-fit with more employee types,
+
 ##### Admin
-This user is the django "superuser"
-He is given the "AdminPrivilege" group
+This user is the django *superuser*.   
+He is given the **AdminPrivilege** group.   
 An admin can
 - Create and delete Employee IDs
-- One admin (ref. as BASE_ADMIN - see users/constants.py) is created during the application initialization, having login details
-  * Email : karthikdesingu2000@gmail.com
-  * Password : admin123
-  * Employee ID : ADM001
+- One admin (referred to as BASE_ADMIN - see [users/constants.py](./roomBookingManager/users/constants.py)) is created during the application initialization, having login details
+  * **Email** : karthikdesingu2000@gmail.com
+  * **Password** : admin123
+  * **Employee ID** : ADM001
 - Only an admin can generate employee IDs (for both other admins and managers)
 - Only an admin can unassign an employee ID, thereby deleting the corresponding employee, retaining the employee ID for reassignment
 - Only an admin can view all employee IDs, so as to share it with newly appointed Managers, Admins or other employee types (if and when created), so that they can signup and use the interface
-- A person can signup as an Admin, only using a generated Admin Employee ID, which is expected to be given to the person by an existing admin (hence, the need for an initially existing admin)
+- A person can sign up as an Admin, only using a generated Admin Employee ID, which is expected to be given to the person by an existing admin (hence, the need for an initially existing admin)
 - An admin can access the entire database of the application through API Queries (discussed separately in APIs)
 - The API is protected using a token based authentication system which can be generated only for an admin user, with his/her password (discussed separately in APIs)
 - An admin can send messages and view basic profile information of any type of user
