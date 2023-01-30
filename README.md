@@ -2,7 +2,7 @@
 
 Deployed at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - scheduling and manage match slots and visitor facilities.
 
-Django based web-application to book time/room slots for events.    
+A Django based web-application to book time/room slots for events.    
 Three user interface types:
 - Owner: To create and manage rooms/slots. 
 - Manager: To manage rooms/slots and bookings. 
@@ -15,23 +15,28 @@ Three user interface types:
 - As mentioned above, the hierarchy of users is an easily extensible implementation enabling easy addition of employee types
 - Separate maintenance of Employee IDs
 - Need for generation of ID by admin to ensure only verified persons can signup as Manager or Admin
-### Site Local MESSAGING Service
+
+### Site-local MESSAGING Service
 - Allows Customer to contact relevant managers through site, using their mail ID
 - Managers and Admins can also easily notify users about changes, updates, etc through messages
 - Display of number of unread messages during login
+
 ### RESTful API Endpoints
 - API endpoints for accessing and deleting records in all databases
 - Addtionally, can handle user creation - all three types
 - Authentication using tokens, allowing only admins to access and modify complete site data
 - (NOTE: Authentication is removed for User Management, Employee ID APIs for ease of simulation of POST requests, these can be added during actual deployment by simply mentioning the authentication class in Views)
-### Email Based Notifications
+
+### Email-based Notifications
 - Email notification to admin during employee ID generation
 - Email notification to customers about changes or deltions in bookings
+
 ### Isolated Reservation Database
 - An additional database to store reservation data in simple data format
 - Not linked to any other database through foreign-keys, etc. 
 - Used to permanently store user reservation history
 - Destroyed only when the customer is deleted
+
 ### View Profile Feature
 - Users can view relevant user profiles
 - This enables access to contact information like phone number, email ID apart from messaging service
@@ -39,10 +44,23 @@ Three user interface types:
 - Admin can view all
 - Manager can view all
 - Customer can view only Managers and only respond (not initiate) conversations with an admin
+
 ### Change Password Feature
 - Users are allowed to change their user account password.
 
-## Run your own instance
+## Improvisations and Atomic Features Used
+- Built multi-layer wrapped decorators to accept additional arguments
+- Created custom decorators for permissions management
+- Used signals to initially populate database 
+- Used signals to auto-update isolated data models
+- Used signals to send email updates to Cutsomer User
+- Custom defined user model to enable email based login
+- Redefined User Manager class to handle custome user model
+- Created user groups to streamline and control user access
+- Used SMTP protocol for emailing notifications to customers
+
+
+## Run your own instance!
 
 ### Getting the project
 - The repository can be cloned to another GitHub account or Donwloaded
@@ -165,9 +183,9 @@ As per the task description
 - The defined slots are recurring constantly
 - A manager can modify the room slots as follows:
   * Change the slot timings, in which case the reservations made for those slots on all days in future are modified
-    - The relevant customers are notified about the same, via email, when changed
+   - The relevant customers are notified about the same, via email, when changed
   * Manager can delete a slot, in which case the reservations made for those slots on all days in future are deleted
-    - The relevant customer are notified about the same via email, when deleted
+   - The relevant customer are notified about the same via email, when deleted
 - A manager can also delete a room, in which case the reservations made for that room on all days in future are deleted
   *  The relevant customer are notified about the same via email, when deleted
 - A manager can view all bookings of rooms of all managers in the portal, view customer details and occupancy status
@@ -205,7 +223,7 @@ and the Authentication can be added before deployment with just a single line of
 - The mentioned methods use curl
 
 > NOTE THAT ALL URLs HERE ARE ONLY ONLY RELATIVE. THE HOST and DOMAIN depend on the Address on which the test-server runs
-- Eg. For a relative URL "/api/get-token/", 
+- Eg. For a relative URL `/api/get-token/`, 
 - If my server runs on http://127.0.0.1:8000/
 - The absolute URL will be http://127.0.0.1:8000/api/get-token/ 
 - Hence, send requests to the absoilute URLs after combining
@@ -466,44 +484,31 @@ The other API endpoints are alll authenticated and are similar to type Room Deta
 ### URLs Summary
 The following is the list of URL Patterns which has to be prefixed with **/api/** 
 
-   - `get-token/'`, GenerateAuthToken
-   - `user-handler/'`, UserHandler.
-   - `user-detail/<int:id>/'`, UserDetail	
-   - `cust-handler/'`, CustomerHandler
-   - `cust-detail/<int:id>/'`, CustomerDetail
-   - `manager-handler/'`, ManagerHandler
-   - `manager-detail/<int:id>/'`, ManagerDetail
-   - `admin-handler/'`, AdminHandler.as_view()
-   - `admin-detail/<int:id>/'`, AdminDetail
-   - `empid-handler/'`, EmpidHandler
-   - `empid-detail/<str:emp_id>/`'
-   - `room-handler/'`, RoomHandler
-   - `slot-handler/'`, SlotHandler
-   - `room-detail/<str:room_no>/'`, RoomDetail
-   - `slot-detail/<int:id>/'`, SlotDetail
-   - `all-reserves/'`, AllReservations
-   - `past-reserves/'`, PastReservations
-   - `future-reserves/'`, FutureReservations
-   - `occupied-reserves/'`, OngoingReservations.
-   - `cancelled-reserves/'`, CancelledReservations
-   - `reserve-detail/<int:id>/'`, InactiveReservationDetail
-   - `reserve-manage/<int:id>/`', ActiveReservationManage       
+   - `get-token/`, GenerateAuthToken
+   - `user-handler/`, UserHandler.
+   - `user-detail/<int:id>/`, UserDetail	
+   - `cust-handler/`, CustomerHandler
+   - `cust-detail/<int:id>/`, CustomerDetail
+   - `manager-handler/`, ManagerHandler
+   - `manager-detail/<int:id>/`, ManagerDetail
+   - `admin-handler/`, AdminHandler.as_view()
+   - `admin-detail/<int:id>/`, AdminDetail
+   - `empid-handler/`, EmpidHandler
+   - `empid-detail/<str:emp_id>/`
+   - `room-handler/`, RoomHandler
+   - `slot-handler/`, SlotHandler
+   - `room-detail/<str:room_no>/`, RoomDetail
+   - `slot-detail/<int:id>/`, SlotDetail
+   - `all-reserves/`, AllReservations
+   - `past-reserves/`, PastReservations
+   - `future-reserves/`, FutureReservations
+   - `occupied-reserves/`, OngoingReservations.
+   - `cancelled-reserves/`, CancelledReservations
+   - `reserve-detail/<int:id>/`, InactiveReservationDetail
+   - `reserve-manage/<int:id>/`, ActiveReservationManage       
      
-    > Complete implementation details can be found in the [`api`](./roomBookingManager/api) folder of the project
-
-## Improvisations and Atomic Features Used
-- Built multi-layer wrapped decorators to accept additional arguments
-- Created custom decorators for permissions management
-- Used signals to initially populate database 
-- Used signals to auto-update isolated data models
-- Used signals to send email updates to Cutsomer User
-- Custom defined user model to enable email based login
-- Redefined User Manager class to handle custome user model
-- Created user groups to streamline and control user access
-- Used SMTP protocol for emailing notifications to customers
-
+> Complete implementation details can be found in the [`api`](./roomBookingManager/api) folder of the project.
 
 ## Regulations
 
-- Followed PEP8 Recommendations (as prescribed in task)
-
+- Followed PEP8 Recommendations.
