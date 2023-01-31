@@ -2,7 +2,7 @@
 
 > Deployed as a web service at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - to schedule and **manage game slots and visitor facilities** on a **resource-constrained campus**.
 
-A Django based web-application to **manage time/room slots** for events centrally, with hiearchical user permissions.    
+A Django based web-application to **manage time/room slots** for events centrally, with hierarchical user permissions.    
 It features three user-ends (interfaces and permission-levels):
 - **Owner**: To create and manage rooms/slots. Admin access, with managerial rights. 
 - **Manager**: To manage rooms/slots and bookings. 
@@ -18,7 +18,7 @@ It features three user-ends (interfaces and permission-levels):
 - Separate maintenance of Employee IDs
 - Need for generation of ID by admin to ensure only verified persons can signup as Manager or Admin
 
-### Site-local MESSAGING Service
+### Site-local Messaging Service
 - Allows Customer to contact relevant managers through site, using their mail ID
 - Managers and Admins can also easily notify users about changes, updates, etc through messages
 - Display of number of unread messages during login
@@ -27,7 +27,7 @@ It features three user-ends (interfaces and permission-levels):
 - API endpoints for accessing and deleting records in all databases
 - Addtionally, can handle user creation - all three types
 - Authentication using tokens, allowing only admins to access and modify complete site data
-- (NOTE: Authentication is removed for User Management, Employee ID APIs for ease of simulation of POST requests, these can be added during actual deployment by simply mentioning the authentication class in Views)
+> Note that authentication is removed for User Management, Employee ID APIs for ease of simulation of POST requests, these can be added during actual deployment by simply mentioning the authentication class in Views.
 
 ### Email-based Notifications
 - Email notification to admin during employee ID generation
@@ -50,7 +50,7 @@ It features three user-ends (interfaces and permission-levels):
 ### Change Password Feature
 - Users are allowed to change their user account password.
 
-## Improvisations and Atomic Features Used
+## Improvizations and Atomic Features Used
 - Built multi-layer wrapped decorators to accept additional arguments
 - Created custom decorators for permissions management
 - Used signals to initially populate database 
@@ -64,58 +64,54 @@ It features three user-ends (interfaces and permission-levels):
 
 ## Run your own instance!
 
-**Get the whole project and build atop, or simply plug in the features you need.**
+**Get the whole project and build atop ([`fork`](./fork)), or simply plug in the features you need ([`clone`](https://github.com/karthik-d/room-slot-booking.git)).**
 
 ### Getting the project
-- The repository can be cloned to another GitHub account or Donwloaded
-- The virtual folder details the virtual environment in which the project is built
-- The roomBookingManager folder contains the project file system, in a specific hierarchy that must not be disturbed
-- One can either use the same, which already has all the required dependencies or get only the prohect from here and install all dependencies as detailed in "requirements.txt"
-- The instructions listed below are for Linux Based Systems 
+- [`Clone`](https://github.com/karthik-d/room-slot-booking.git) or [`fork`](./fork) the repository, based on what you need.
+- The [`virtual`](./virtual) folder details the environment sandbox for the project.
+- The [`roomBookingManager`](./roomBookingManager) folder contains the project file system.
+- Either reuse the environment, or install all dependencies as specified in [requirements.txt](./requirements.txt).
+- The instructions listed below are for *nix systems.
 
 ### Setting up the environment
-- It is advisable to run the project from a dedicated virtual environment
-- One can use the "virtual" included in the repository or create one and install all dependencies listed in "requirements.txt"
-- Activate the environment
-- The listed information is for using the same environment i.e "virtual", included hin this repository
-  * Open a linux terminal
-  * Naviagate to the folder where roomBookingManager and viirtual folders are located
-  * Use this command to activate the environment (called 'virtual')
-    
+- It is recommended that the project us run in a dedicated virtual environment.
+- Once the environment is set up, activate the environment.
+- The listed information is for using the same environment i.e **virtual**, included hin this repository.
+  * Open a linux terminal.
+  * Navigate to the folder where roomBookingManager and viirtual folders are located.
+  * Use this command to activate the environment.    
     ``` $ source virtual/bin/activate ```
-  * This should enter the environment
-  * Navigate into the roomBookingManager folder
+  * This should enter the environment.
+  * Navigate to the [`roomBookingManager`](./roomBookingManager) folder.
   
 ### Executing the project
-- Continue the steps here after "Setting up the environment"
-  * You should now be in the roomBookingManager folder (Note that this folder contains a sub-folder with the same name. You must be located in the outer one. Hence, currently folders like api, users, customer_iface, etc in your present working directory)
-  * Execute the following commands in order
-  
+  * You should now be in the [`roomBookingManager`](./roomBookingManager) folder.   
+  **Note** that this folder contains a sub-folder with the same name. You must be located in the outer one.
+  * Execute the following commands in order  
   ``` 
   (virtual) $ sudo python3 manage.py makemigrations
   (virtual) $ sudo python3 manage.py migrate
   (virtual) $ sudo python3 manage.py runserver
   ```
   
-  * On some systems, this might cause Import Errors as it may attempt to execute from outside the environment. In tat case, do this instead
-    
+  * On some systems, this might cause Import Errors as it may attempt to execute from outside the environment. In that case, do this instead,    
   ``` 
   (virtual) $ sudo ../virtual/bin/python3 manage.py makemigrations
   (virtual) $ sudo ../virtual/bin/python3 manage.py migrate
   (virtual) $ sudo ../virtual/bin/python3 manage.py runserver
   ```
   
-  * This should get the server running. The address to the website will be displayed in the terminal
-  * Open the http- web address in a browser (preferably Mozilla Firefox)
-  * The website can be navigated from here on
-  * Hit (ctr+C) in the teminal to stop the server
+  * This should get the server running. The address to the website will be displayed in the terminal.
+  * Open the http web address in a browser (preferably Mozilla Firefox).
+  * The website can be navigated from here on.
+  * Hit `ctr+c` in the teminal to stop the server.
   
 ### Running the TestCases
-  - Continue the steps here after "Setting up the environment"
+  To run the automated test cases,
   ``` 
   (virtual) $ sudo python3 manage.py test
   ```
-  OR
+  **Or**
   ``` 
   (virtual) $ sudo ../virtual/bin/python3 manage.py test 
   ```
@@ -146,8 +142,8 @@ The detailed explanation is mentioned in the user-types below.
 There are 3 types of users presently with an easily extensible model to retro-fit with more employee types,
 
 ##### Admin
-This user is the django *superuser*.   
-He is given the **AdminPrivilege** group.   
+This user is the Django *superuser*.   
+This user type is given the **AdminPrivilege** group.   
 An admin can
 - Create and delete Employee IDs
 - One admin (referred to as BASE_ADMIN - see [users/constants.py](./roomBookingManager/users/constants.py)) is created during the application initialization, having login details
@@ -212,8 +208,7 @@ Accessible only by an admin user after token generation
 
 ## API Endpoints: In Detail
 
-> NOTE that Token Authentication is removed for user management to enable EASY SIMULATION Of GET, POST and DELETE methods
-and the Authentication can be added before deployment with just a single line of code.
+> Note that Token Authentication is removed for user management to enable easy simulation of GET, POST and DELETE methods and the Authentication can be added before deployment with just a single line of code.
 
 - The authentication is enabled for all API endpoints except Token Generation, User, Customer, Manager and Admin Management
 - The API interface for this webiste is isolated from the rest of the HTTP HTML request rendering, being kept in a separate application called "api"
@@ -227,14 +222,14 @@ and the Authentication can be added before deployment with just a single line of
 - Python based scripts using 'requests' module can also be used to send requests and get back data
 - The mentioned methods use curl
 
-> NOTE THAT ALL URLs HERE ARE ONLY ONLY RELATIVE. THE HOST and DOMAIN depend on the Address on which the test-server runs
+> Note that all URLs mentioned here are *relative*. THE HOST and DOMAIN depend on the Address on which the test-server runs
 - Eg. For a relative URL `/api/get-token/`, 
 - If my server runs on http://127.0.0.1:8000/
 - The absolute URL will be http://127.0.0.1:8000/api/get-token/ 
-- Hence, send requests to the absoilute URLs after combining
+- Hence, send requests to the absolute URLs after combining.
 
 Following are the APIs and their relative URLs,
-### Generating Token for Admins (NO AUTHENTICATION)
+### Generating Token for Admins (**No Authentication**)
 - This is the only request that can be made without a Token based autentication
 ```
 api/get-token
@@ -247,7 +242,7 @@ api/get-token
 ```
 - This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to type in POST JSON data and send a request 
 
-### User Details (NO AUTHENTICATION)
+### User Details (**No Authentication**)
  ### Relative URLs
  - **URL 1**: For Listing All Users (GET) 
  ```
@@ -277,7 +272,7 @@ api/get-token
 ```
 
 
-### Customer Details (NO AUTHENTICATION)
+### Customer Details (**No Authentication**)
  ### Relative URLs
  - **URL 1**: For Listing All (GET) Customer and Creating Customer (POST)
  ```
@@ -320,7 +315,7 @@ http://127.0.0.1:8000/api/cust-handler/
 - This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
 
 
-### Manager Details (NO AUTHENTICATION)
+### Manager Details (**No Authentication**)
  ### Relative URLs
  - **URL 1**: For Listing All (GET) Manager and Creating Manager (POST)
  ```
@@ -363,7 +358,7 @@ http://127.0.0.1:8000/api/manager-handler/
 - This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
 
 
-### Admin Details (NO AUTHENTICATION)
+### Admin Details (**No Authentication**)
  ### Relative URLs
  - **URL 1**: For Listing All (GET) Admins and Creating Admins (POST)
  ```
@@ -406,7 +401,7 @@ http://127.0.0.1:8000/api/admin-handler/
 - This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
 
 
-### Employee ID Details (NO AUTHENTICATION)
+### Employee ID Details (**No Authentication**)
  ### Relative URLs
  - **URL 1**: For Listing All (GET) IDs and Creating IDs (POST)
  ```
@@ -428,7 +423,7 @@ http://127.0.0.1:8000/api/admin-handler/
  ```
  #### POST Request Example
  
- - Used to CREATE an Employee iD
+ - Used to CREATE an Employee ID
  - JSON Data required - emp_type (the type of employee for whom to generate ID - valid values are 'manager', 'admin'
  Refer users/constants.py - The EMPLOYEE_PREFIXES dictionary's keys are the available employee types)
  - It is recommended to make POST requests directly through browser to avoid loss or incorrect formatting of data
@@ -450,7 +445,7 @@ http://127.0.0.1:8000/api/empid-handler/
 - This request can be made on a browser directly as the Django Rest Framework (DRF) provides an interface to DELETE the record with a button click
 
 
-### Room Details (AUTHENTICATION REQUIRED)
+### Room Details (**No Authentication**)
  ### Relative URLs
  - **URL 1**: For Listing All Rooms (GET) 
  ```
