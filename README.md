@@ -23,13 +23,13 @@ It features three user-ends (interfaces and permission-levels):
 - Managers and Admins can also easily notify users about changes, updates, etc through messages
 - Display of number of unread messages during login
 
-### RESTful API Endpoints
+### RESTful API Endpoints, in addition to the Web-Application
 - API endpoints for accessing and deleting records in all databases
 - Addtionally, can handle user creation - all three types
 - Authentication using tokens, allowing only admins to access and modify complete site data
 > Note that authentication is removed for User Management, Employee ID APIs for ease of simulation of POST requests, these can be added during actual deployment by simply mentioning the authentication class in Views.
 
-### Email-based Notifications
+### Email Notifications
 - Email notification to admin during employee ID generation
 - Email notification to customers about changes or deltions in bookings
 
@@ -38,17 +38,6 @@ It features three user-ends (interfaces and permission-levels):
 - Not linked to any other database through foreign-keys, etc. 
 - Used to permanently store user reservation history
 - Destroyed only when the customer is deleted
-
-### View Profile Feature
-- Users can view relevant user profiles
-- This enables access to contact information like phone number, email ID apart from messaging service
-- User Hierarchy is respected here
-- Admin can view all
-- Manager can view all
-- Customer can view only Managers and only respond (not initiate) conversations with an admin
-
-### Change Password Feature
-- Users are allowed to change their user account password.
 
 ## Improvizations and Atomic Features Used
 - Built multi-layer wrapped decorators to accept additional arguments
@@ -94,7 +83,7 @@ It features three user-ends (interfaces and permission-levels):
   (virtual) $ sudo python3 manage.py runserver
   ```
   
-  * On some systems, this might cause Import Errors as it may attempt to execute from outside the environment. In that case, do this instead,    
+  * On some systems, this might cause import errors as it may attempt to execute from outside the environment. Here's a workaround,   
   ``` 
   (virtual) $ sudo ../virtual/bin/python3 manage.py makemigrations
   (virtual) $ sudo ../virtual/bin/python3 manage.py migrate
@@ -102,9 +91,8 @@ It features three user-ends (interfaces and permission-levels):
   ```
   
   * This should get the server running. The address to the website will be displayed in the terminal.
-  * Open the http web address in a browser (preferably Mozilla Firefox).
-  * The website can be navigated from here on.
-  * Hit `ctr+c` in the teminal to stop the server.
+  * Open the HTTP web address in a browser.
+  * Hit `ctrl+c` in the teminal to stop the server.
   
 ### Running the TestCases
   To run the automated test cases,
@@ -116,7 +104,7 @@ It features three user-ends (interfaces and permission-levels):
   (virtual) $ sudo ../virtual/bin/python3 manage.py test 
   ```
 ### Closing the environment
-- To exit the virtual environmnent, from any directory
+- To exit the virtual environmnent, from any directory,
  ``` 
   (virtual) $ deactivate
   ```
@@ -124,87 +112,85 @@ It features three user-ends (interfaces and permission-levels):
 ## Features  
 
 ### User Authentication
-- The application uses customised User Model with a rebuilt User Manager class to implement user management
-  It features login with email (ceasing the need for a dedicated username)
-- A login page is used to authenticate registered users
-- Registration pages are dependent on the user-type to create new users
+- The application uses a customised user model with a tailored `UserManager` class to implement user management, featuring email authentication.
+- A login page is used to authenticate registered users.
+- Registration pages are dependent on the user type.
 
 ### Users Architecture
 
 #### User Groups
-There are three User Grops deisgned in this application to handle user permissions with ease
-- AdminPrivilege
-- ManagerPrivilege
-- CustomerPrivilege
-The detailed explanation is mentioned in the user-types below.
+There are three user groupes deisgned in this application to handle user permissions with ease
+- `AdminPrivilege`
+- `ManagerPrivilege`
+- `CustomerPrivilege`
+
+A detailed explanation follows.
 
 #### User Types
-There are 3 types of users presently with an easily extensible model to retro-fit with more employee types,
+There are 3 types of users presently with an easily extensible model to retrofit with more employee types.
 
 ##### Admin
-This user is the Django *superuser*.   
-This user type is given the **AdminPrivilege** group.   
+- This user is the Django *superuser*.   
+- This user type is given the **AdminPrivilege** group.   
+   
 An admin can
 - Create and delete Employee IDs
-- One admin (referred to as BASE_ADMIN - see [users/constants.py](./roomBookingManager/users/constants.py)) is created during the application initialization, having login details
+- One admin (referred to as BASE_ADMIN - see [users/constants.py](./roomBookingManager/users/constants.py)) is created during the application initialization, with the following credentials,
   * **Email** : karthikdesingu2000@gmail.com
   * **Password** : admin123
   * **Employee ID** : ADM001
-- Only an admin can generate employee IDs (for both other admins and managers)
-- Only an admin can unassign an employee ID, thereby deleting the corresponding employee, retaining the employee ID for reassignment
-- Only an admin can view all employee IDs, so as to share it with newly appointed Managers, Admins or other employee types (if and when created), so that they can signup and use the interface
-- A person can sign up as an Admin, only using a generated Admin Employee ID, which is expected to be given to the person by an existing admin (hence, the need for an initially existing admin)
-- An admin can access the entire database of the application through API Queries (discussed separately in APIs)
-- The API is protected using a token based authentication system which can be generated only for an admin user, with his/her password (discussed separately in APIs)
-- An admin can send messages and view basic profile information of any type of user
+- Only an admin can generate employee IDs (for both other admins and managers).
+- Only an admin can unassign an employee ID, thereby deleting the corresponding employee, retaining the employee ID for reassignment.
+- Only an admin can view all employee IDs, so as to share it with newly appointed Managers, Admins or other employee types (if and when created), so that they can signup and use the interface.
+- A person can sign up as an Admin, only using a generated Admin Employee ID, which is expected to be given to the person by an existing admin (hence, the need to initialize an admin).
+- An admin can access the entire database of the application through API Queries (discussed separately in APIs).
+- The API is protected using a token based authentication system which can be generated only for an admin user, with his/her password (discussed separately in APIs).
+- An admin can send messages and view basic profile information of any type of user.
 
 ##### Manager (an Employee)
-- Currently the only type of Employee
-- A manager can signup a user account on the portal, only using a valid employee ID given to him/her by an Admin
-- A manager can create his own rooms supplying details about
+- Currently, the only type of Employee.
+- A manager can signup a user account on the portal, only using a valid employee ID given to him/her by an `admin`.
+- A manager can create his own rooms supplying details about.
   * Room Number
   * Advance Reservation Period - Max. number of days beofre which a room can be booked (Eg. If it is 10 and today is 16th of March, any slot in that room can only be booked only upto 26th of March. That is, booking opens only 10 days in advance)
   * Description about the room 
-- A manager can add any number of valid slots for each of his rooms (Room and Reservation detailed later in Document)
-- A manager can view all reservations, including those of other managers
-- A manager has permission to send messages to a Customer and Admin, as well as view basic profile information
+- A manager can add any number of valid slots for each of his rooms (*Room* and *Reservation* are detailed later in this document).
+- A manager can view all reservations, including those of other managers.
+- A manager has permission to send messages to a Customer and Admin, as well as view basic profile information.
 
 ##### Customer 
-- A customer can can signup to the portal simply by filling a simplem form
-- A customer can  view and book any room-slot that is within the Reservation Period 
-- A customer can view all his bookings so far i.e. the past, future and cancelled ones
-- A customer can, however, delete only bookings in the future
+- A customer can can signup to the portal simply by filling a simplem form.
+- A customer can  view and book any room-slot that is within the Reservation Period.
+- A customer can view all his bookings so far i.e. the past, future and cancelled ones.
+- A customer can, however, delete only bookings in the future.
 - A customer has permissions to send messages to a Manager and view basic profile information.
-- A customer cannot initiate a message conversation with an Admin, but can respond and continue if the admin has started it
+- A customer cannot initiate a message conversation with an Admin, but can respond and continue if the admin has started it.
 
 ### Manager User
-As per the task description
-- A manager can define the number and details of rooms in his control (as mentioned above)
-- A manager can define the slots for each room 
-- The defined slots are recurring constantly
+- A manager can define the number and details of rooms in his control (as mentioned above).
+- A manager can define the slots for each room.
+- The defined slots are recurring constantly.
 - A manager can modify the room slots as follows:
-  * Change the slot timings, in which case the reservations made for those slots on all days in future are modified
-   - The relevant customers are notified about the same, via email, when changed
-  * Manager can delete a slot, in which case the reservations made for those slots on all days in future are deleted
-   - The relevant customer are notified about the same via email, when deleted
-- A manager can also delete a room, in which case the reservations made for that room on all days in future are deleted
-  *  The relevant customer are notified about the same via email, when deleted
-- A manager can view all bookings of rooms of all managers in the portal, view customer details and occupancy status
+  * Change the slot timings, in which case the reservations made for those slots on all days in future are modified.
+   - The relevant customers are notified about the same, via email, when changed.
+  * Manager can delete a slot, in which case the reservations made for those slots on all days in future are deleted.
+   - The relevant customer are notified about the same via email, when deleted.
+- A manager can also delete a room, in which case the reservations made for that room on all days in future are deleted.
+  *  The relevant customer are notified about the same via email, when deleted.
+- A manager can view all bookings of rooms of all managers in the portal, view customer details and occupancy status.
 
 ### Customer User
-As per the task requirements
-- A customer can book an availbale room, listed to him on the page, only if it is available for booking
-- Duplicate reservations of the same room cannot be made
-- A customer can view his reservations and also delete them - only in which case the room can be booked by other customers
-- Customer is shown only those rooms for booking, which are within the reservation period. This period (as mentioned before) is defined by the manager during room creation
-- A customer can view all types of reervations of his own - past, future, cancelled. He can further view the relevant manager's profile details
+- A customer can book an availbale room, listed to him on the page, only if it is available for booking.
+- Duplicate reservations of the same room cannot be made.
+- A customer can view his reservations and also delete them - only in which case the room can be booked by other customers.
+- Customer is shown only those rooms for booking, which are within the reservation period. This period (as mentioned before) is defined by the manager during room creation.
+- A customer can view all types of reervations of his own - past, future, cancelled. He can further view the relevant manager's profile details.
 
 ### Test Cases
-Test cases testing the functioning and integrity of models, forms, signals and views have been included for all applications of the website in their respective "tests.py" file
+Test cases testing the functioning and integrity of models, forms, signals and views have been included for all applications of the website in their respective "tests.py" file.
 
 ### API Endpoints
-Token authenticated API endpoints have been designed for the website, detailed ahead in the documentation
-Accessible only by an admin user after token generation
+Token authenticated API endpoints have been designed for the website. These are accessible only to an `admin` user after token generation.
 
 ## API Endpoints: In Detail
 
