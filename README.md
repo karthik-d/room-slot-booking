@@ -13,10 +13,10 @@ It features three user-ends (interfaces and permission-levels):
 > Each feature is **independently pluggable** into any Django project, with minimal adaptations. For instance, the **intra-website messaging service** can be plugged into any Django project that conceptualizes user management.
 
 ### Practical User Hierarchy
-- Allow logins based on Email ID
-- As mentioned above, the hierarchy of users is an easily extensible implementation enabling easy addition of employee types
-- Separate maintenance of Employee IDs
-- Need for generation of ID by admin to ensure only verified persons can signup as Manager or Admin
+- Allow logins based on Email ID.
+- As mentioned above, the hierarchy of users is an easily extensible implementation enabling easy addition of employee types.
+- Separate maintenance of Employee IDs.
+- Need for generation of ID by admin to ensure only verified persons can signup as Manager or Admin.
 
 ### Site-local Messaging Service
 - Allows Customer to contact relevant managers through site, using their mail ID
