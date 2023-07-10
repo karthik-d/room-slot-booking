@@ -20,35 +20,35 @@ It features three user-ends (interfaces and permission-levels):
 
 ### Site-local Messaging Service
 - Allows Customer to contact relevant managers through site, using their mail ID
-- Managers and Admins can also easily notify users about changes, updates, etc through messages
-- Display of number of unread messages during login
+- Managers and Admins can also easily notify users about changes, updates, etc through messages.
+- Display of number of unread messages during login.
 
 ### RESTful API Endpoints, in addition to the Web-Application
-- API endpoints for accessing and deleting records in all databases
-- Addtionally, can handle user creation - all three types
-- Authentication using tokens, allowing only admins to access and modify complete site data
+- API endpoints for accessing and deleting records in all databases.
+- Addtionally, can handle user creation - all three types.
+- Authentication using tokens, allowing only admins to access and modify complete site data.
 > Note that authentication is removed for User Management, Employee ID APIs for ease of simulation of POST requests, these can be added during actual deployment by simply mentioning the authentication class in Views.
 
 ### Email Notifications
-- Email notification to admin during employee ID generation
-- Email notification to customers about changes or deltions in bookings
+- Email notification to admin during employee ID generation.
+- Email notification to customers about changes or deltions in bookings.
 
 ### Isolated Reservation Database
 - An additional database to store reservation data in simple data format
 - Not linked to any other database through foreign-keys, etc. 
-- Used to permanently store user reservation history
-- Destroyed only when the customer is deleted
+- Used to permanently store user reservation history.
+- Destroyed only when the customer is deleted.
 
 ## Improvizations and Atomic Features Used
-- Built multi-layer wrapped decorators to accept additional arguments
-- Created custom decorators for permissions management
-- Used signals to initially populate database 
-- Used signals to auto-update isolated data models
-- Used signals to send email updates to Cutsomer User
-- Custom defined user model to enable email based login
-- Redefined User Manager class to handle custome user model
-- Created user groups to streamline and control user access
-- Used SMTP protocol for emailing notifications to customers
+- Built multi-layer wrapped decorators to accept additional arguments.
+- Created custom decorators for permissions management.
+- Used signals to initially populate database.
+- Used signals to auto-update isolated data models.
+- Used signals to send email updates to Cutsomer User.
+- Custom defined user model to enable email based login.
+- Redefined User Manager class to handle custome user model.
+- Created user groups to streamline and control user access.
+- Used SMTP protocol for emailing notifications to customers.
 
 
 ## Run your own instance!
@@ -119,7 +119,7 @@ It features three user-ends (interfaces and permission-levels):
 ### Users Architecture
 
 #### User Groups
-There are three user groupes deisgned in this application to handle user permissions with ease
+There are three user groupes deisgned in this application to handle user permissions with ease.
 - `AdminPrivilege`
 - `ManagerPrivilege`
 - `CustomerPrivilege`
