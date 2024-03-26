@@ -1,8 +1,8 @@
 # Slot Booking with Intra-Website Messaging Service: A Django Application
 
-> Deployed as a web service at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/) - a state-level inter-school basketball tournament - to schedule and **manage game slots and visitor facilities** on a **resource-constrained campus**.
+> Deployed as a web service at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/), a state-level inter-school basketball tournament, to schedule and **manage game slots and visitor facilities** on a **resource-constrained campus**.
 
-A Django based web-application to **manage time/room slots** for events centrally, with hierarchical user permissions.    
+A Python Django -based web-application to **manage time/room slots** for events centrally, with hierarchical user permissions.    
 It features three user-ends (interfaces and permission-levels):
 - **Owner**: To create and manage rooms/slots. Admin access, with managerial rights. 
 - **Manager**: To manage rooms/slots and bookings. 
