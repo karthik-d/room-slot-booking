@@ -2,8 +2,7 @@
 
 > Deployed as a web service at [Blazing Hoops '17](https://d2c99kev9mr0qi.cloudfront.net/), a state-level inter-school basketball tournament, to schedule and **manage game slots and visitor facilities** on a **resource-constrained campus**.
 
-A Python Django -based web-application to **manage time/room slots** for events centrally, with hierarchical user permissions.    
-It features three user-ends (interfaces and permission-levels):
+A Python Django -based web-application to **manage time/room slots** for events centrally, with hierarchical user permissions. It features three user-ends (interfaces and permission-levels):
 - **Owner**: To create and manage rooms/slots. Admin access, with managerial rights. 
 - **Manager**: To manage rooms/slots and bookings. 
 - **Customer**: To request room/slot bookings. 
@@ -16,7 +15,7 @@ It features three user-ends (interfaces and permission-levels):
 - Allow logins based on Email ID.
 - As mentioned above, the hierarchy of users is an easily extensible implementation enabling easy addition of employee types.
 - Separate maintenance of Employee IDs.
-- Need for generation of ID by admin to ensure only verified persons can signup as Manager or Admin.
+- Need for generation of ID by admin to ensure only verified persons can signup as a `manager` or as an `admin`.
 
 ### Site-local Messaging Service
 - Allows Customer to contact relevant managers through site, using their mail ID
